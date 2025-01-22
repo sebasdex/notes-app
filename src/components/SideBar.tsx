@@ -59,40 +59,45 @@ function SideBar() {
   );
   return (
     <section className="sidebar">
-      <ul className="space-y-6">
-        <li className="flex flex-col items-center gap-4 p-4">
+      <ul className=" flex justify-center gap-12 w-full md:flex-col md:gap-10 md:justify-between md:w-auto">
+        <li className="flex items-center gap-4 md:flex-col">
           <div className="flex items-center gap-4">
             <span aria-hidden="true">{addIcon}</span>
             <p className="text-sm font-medium">Add new</p>
           </div>
           <ul className="flex gap-2 md:flex-col">
-            <li>
+            <li className="flex items-center">
               <button
                 aria-label="Add yellow"
                 className="h-5 w-5 rounded-full bg-yellow-500 hover:border-2 border-gray-300"
               ></button>
             </li>
-            <li>
+            <li className="flex items-center">
               <button
                 aria-label="Add blue"
                 className="h-5 w-5 rounded-full bg-blue-500 hover:border-2 border-gray-300"
               ></button>
             </li>
-            <li>
+            <li className="flex items-center">
               <button
                 aria-label="Add red"
                 className="h-5 w-5 rounded-full bg-red-500 hover:border-2 border-gray-300"
-              ></button>
+              >
+              </button>
             </li>
           </ul>
         </li>
-        <li className="flex flex-col items-center gap-2 text-gray-400 md:flex-row group hover:text-gray-700">
-          <span className="group-hover:cursor-pointer">{archiveIcon}</span>
-          <Link href="/archive">Archive</Link>
+        <li className="text-gray-400 md:flex-row group hover:text-gray-700">
+          <Link href="/archive" className="flex flex-col items-center gap-2">
+            <span className="group-hover:cursor-pointer">{archiveIcon}</span>
+            <span>Archive</span>
+          </Link>
         </li>
-        <li className="flex flex-col items-center gap-2 text-gray-400 md:flex-row group hover:text-gray-700">
-          <span className="group-hover:cursor-pointer">{trashIcon}</span>
-          <Link href="/trash">Trash</Link>
+        <li className=" text-gray-400 md:flex-row group hover:text-gray-700">
+          <Link href="/trash" className="flex flex-col items-center gap-2">
+            <span className="group-hover:cursor-pointer">{trashIcon}</span>
+            <span>Trash</span>
+          </Link>
         </li>
       </ul>
     </section>
