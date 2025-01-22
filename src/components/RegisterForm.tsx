@@ -1,8 +1,38 @@
+import { useState } from "react";
+import { supabase } from "../config/supabaseClient";
+import { toast } from "sonner";
+
 interface RegisterFormProps {
   setIsRegister: (value: boolean) => void;
 }
 
 function RegisterForm({ setIsRegister }: RegisterFormProps) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (password !== passwordConfirmation) {
+      toast.error("Las contraseñas no coinciden");
+      return;
+    }
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+    if (error) {
+      toast.error(error.message);
+      console.log('Error: ', error.message);
+    } else {
+      toast.success("Registro exitoso");
+      console.log('Success: ', data);
+      setIsRegister(false);
+      setEmail("");
+      setPassword("");
+      setPasswordConfirmation("");
+    }
+  }
   return (
     <section className="bg-gray-200 rounded-xl max-w-md p-8 mx-auto shadow-lg">
       <h1 className="text-3xl font-semibold text-gray-700 mb-6 text-center">
@@ -48,22 +78,7 @@ function RegisterForm({ setIsRegister }: RegisterFormProps) {
         </span>
       </div>
 
-      <form>
-        <div className="mb-5">
-          <label
-            htmlFor="name"
-            className="block mb-2 text-sm font-medium text-gray-700"
-          >
-            Nombre
-          </label>
-          <input
-            type="text"
-            id="name"
-            className="block w-full px-4 py-2 text-sm bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-800 placeholder-gray-500 transition-all"
-            placeholder="Ingresa tu nombre"
-            required
-          />
-        </div>
+      <form onSubmit={handleSubmit}>
         <div className="mb-5">
           <label
             htmlFor="email"
@@ -77,6 +92,7 @@ function RegisterForm({ setIsRegister }: RegisterFormProps) {
             className="block w-full px-4 py-2 text-sm bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-800 placeholder-gray-500 transition-all"
             placeholder="Ingresa tu correo"
             required
+            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
         <div className="mb-5">
@@ -92,6 +108,7 @@ function RegisterForm({ setIsRegister }: RegisterFormProps) {
             className="block w-full px-4 py-2 text-sm bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-800 placeholder-gray-500 transition-all"
             placeholder="••••••••"
             required
+            onChange={(e) => setPassword(e.target.value)}
           />
         </div>
         <div className="mb-6">
@@ -107,6 +124,7 @@ function RegisterForm({ setIsRegister }: RegisterFormProps) {
             className="block w-full px-4 py-2 text-sm bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-800 placeholder-gray-500 transition-all"
             placeholder="••••••••"
             required
+            onChange={(e) => setPasswordConfirmation(e.target.value)}
           />
         </div>
         <button

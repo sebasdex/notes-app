@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,7 +29,10 @@ export default function LoginLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <div className="bg-gray-300 min-h-screen flex flex-col items-center justify-center">
-          <main className="w-full">{children}</main>
+          <main className="w-full">
+            {children}
+            <Toaster richColors position="top-center" />
+          </main>
         </div>
       </body>
     </html>

@@ -1,11 +1,31 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import { supabase } from "../config/supabaseClient";
+import { Session } from "@supabase/supabase-js";
 
 function Nav() {
   const [isOpen, setIsOpen] = useState(false);
-
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+
+  useEffect(() => {
+    const getSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setSession(session);
+    };
+    getSession();
+
+    // Escucha cambios en la autenticación
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -35,8 +55,9 @@ function Nav() {
         ref={menuRef}
         className="relative min-w-fit w-full flex justify-center items-center gap-4 md:w-auto md:justify-end"
       >
-        <p className="text-sm font-medium">Bienvenido, John Doe</p>
-        <img
+        {session ? <p>Bienvenido, {session.user.email}</p> : <p>No has iniciado sesión</p>}
+        {/* <p className="text-sm font-medium">Bienvenido, John Doe</p> */}
+        <Image
           id="avatarButton"
           data-dropdown-toggle="userDropdown"
           data-dropdown-placement="bottom-start"
@@ -44,6 +65,8 @@ function Nav() {
           src="https://images.pexels.com/photos/1516680/pexels-photo-1516680.jpeg"
           alt="User dropdown"
           typeof="button"
+          width={40}
+          height={40}
           onClick={() => setIsOpen((prev) => !prev)}
         />
 

@@ -1,8 +1,36 @@
+import { useState } from "react";
+import { supabase } from "../config/supabaseClient";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 interface LoginFormProps {
   setIsRegister: (value: boolean) => void;
 }
 
 function LoginForm({ setIsRegister }: LoginFormProps) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    });
+
+    if (error) {
+      if (error.message === 'Invalid login credentials') {
+        toast.error('Datos de acceso incorrectos');
+      } else {
+        toast.error(error.message);
+        console.log('Error:', error.message);
+      }
+    } else {
+      toast.success('Inicio de sesión exitoso');
+      console.log('Inicio de sesión exitoso:', data.user);
+      router.push('/');
+    }
+  };
   return (
     <section className="bg-gray-200 rounded-xl min-w-80 max-w-md p-8 mx-auto shadow-lg">
       <h1 className="text-3xl font-semibold text-gray-700 mb-6">Bienvenido</h1>
@@ -43,7 +71,7 @@ function LoginForm({ setIsRegister }: LoginFormProps) {
           o
         </span>
       </div>
-      <form>
+      <form onSubmit={handleSubmit}>
         <div className="mb-5">
           <label
             htmlFor="email"
@@ -57,6 +85,7 @@ function LoginForm({ setIsRegister }: LoginFormProps) {
             className="block w-full px-4 py-2 text-sm bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-800 placeholder-gray-500 transition-all"
             placeholder="Ingresa tu correo"
             required
+            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
         <div className="mb-5">
@@ -72,6 +101,7 @@ function LoginForm({ setIsRegister }: LoginFormProps) {
             className="block w-full px-4 py-2 text-sm bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-800 placeholder-gray-500 transition-all"
             placeholder="••••••••••••"
             required
+            onChange={(e) => setPassword(e.target.value)}
           />
         </div>
         <button
