@@ -3,7 +3,7 @@ import LoginForm from "@/components/LoginForm";
 import RegisterForm from "@/components/RegisterForm";
 import { useState } from "react";
 
-function page() {
+function Page() {
   const [isRegister, setIsRegister] = useState<boolean>(false);
   return (
     <>
@@ -16,4 +16,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;

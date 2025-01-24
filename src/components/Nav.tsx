@@ -2,29 +2,26 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { supabase } from "../config/supabaseClient";
-import { Session } from "@supabase/supabase-js";
+import { logOut } from "@/app/(auth)/login/actions";
+import { createClient } from "@/config/supabaseClient";
+import { User } from "@supabase/supabase-js";
 
 function Nav() {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setSession(session);
-    };
-    getSession();
-
-    // Escucha cambios en la autenticación
-    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
+    const dataUser = async () => {
+      const supabase = createClient()
+      const { data, error } = await supabase.auth.getUser();
+      if (error || !data?.user) {
+        setUser(null)
+      } else {
+        setUser(data.user)
+      }
+    }
+    dataUser()
   }, []);
 
   useEffect(() => {
@@ -55,8 +52,6 @@ function Nav() {
         ref={menuRef}
         className="relative min-w-fit w-full flex justify-center items-center gap-4 md:w-auto md:justify-end"
       >
-        {session ? <p>Bienvenido, {session.user.email}</p> : <p>No has iniciado sesión</p>}
-        {/* <p className="text-sm font-medium">Bienvenido, John Doe</p> */}
         <Image
           id="avatarButton"
           data-dropdown-toggle="userDropdown"
@@ -73,16 +68,16 @@ function Nav() {
         {isOpen && (
           <div className="absolute top-10 right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
             <div className="px-4 py-3 text-sm text-gray-900">
-              <div>John Doe</div>
-              <div className="font-medium truncate">name@correo.com</div>
+              <div>Bienvenido</div>
+              <div className="font-medium truncate">{user?.email}</div>
             </div>
             <div className="py-1">
-              <a
-                href="#"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              <button
+                onClick={logOut}
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
               >
                 Salir
-              </a>
+              </button>
             </div>
           </div>
         )}

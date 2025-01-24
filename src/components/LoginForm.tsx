@@ -1,36 +1,28 @@
-import { useState } from "react";
-import { supabase } from "../config/supabaseClient";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { login } from "@/app/(auth)/login/actions";
 interface LoginFormProps {
   setIsRegister: (value: boolean) => void;
 }
 
 function LoginForm({ setIsRegister }: LoginFormProps) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const router = useRouter();
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    });
-
-    if (error) {
-      if (error.message === 'Invalid login credentials') {
-        toast.error('Datos de acceso incorrectos');
-      } else {
-        toast.error(error.message);
-        console.log('Error:', error.message);
+    try {
+      const data = new FormData(e.currentTarget);
+      const response = await login(data);
+      if (response?.error) {
+        if (response.error === 'Invalid login credentials') {
+          toast.error('Correo o contraseña incorrectos');
+        } else {
+          toast.error(response.error);
+        }
       }
-    } else {
-      toast.success('Inicio de sesión exitoso');
-      console.log('Inicio de sesión exitoso:', data.user);
-      router.push('/');
+    } catch (error) {
+      console.log('Error al iniciar sesión', error);
+      toast.error('Ocurrió un error inesperado, intenta de nuevo');
     }
   };
+
   return (
     <section className="bg-gray-200 rounded-xl min-w-80 max-w-md p-8 mx-auto shadow-lg">
       <h1 className="text-3xl font-semibold text-gray-700 mb-6">Bienvenido</h1>
@@ -82,10 +74,10 @@ function LoginForm({ setIsRegister }: LoginFormProps) {
           <input
             type="email"
             id="email"
+            name="email"
             className="block w-full px-4 py-2 text-sm bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-800 placeholder-gray-500 transition-all"
             placeholder="Ingresa tu correo"
             required
-            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
         <div className="mb-5">
@@ -98,15 +90,16 @@ function LoginForm({ setIsRegister }: LoginFormProps) {
           <input
             type="password"
             id="password"
+            name="password"
             className="block w-full px-4 py-2 text-sm bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-800 placeholder-gray-500 transition-all"
             placeholder="••••••••••••"
             required
-            onChange={(e) => setPassword(e.target.value)}
           />
         </div>
         <button
           type="submit"
           className="w-full mt-4 px-5 py-2.5 mb-6 text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-400 rounded-lg transition-all"
+
         >
           Ingresa a tu cuenta
         </button>

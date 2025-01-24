@@ -1,38 +1,37 @@
-import { useState } from "react";
-import { supabase } from "../config/supabaseClient";
 import { toast } from "sonner";
+import { signup } from "@/app/(auth)/login/actions";
 
 interface RegisterFormProps {
   setIsRegister: (value: boolean) => void;
 }
 
 function RegisterForm({ setIsRegister }: RegisterFormProps) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordConfirmation, setPasswordConfirmation] = useState("");
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (password !== passwordConfirmation) {
-      toast.error("Las contraseñas no coinciden");
-      return;
-    }
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-    if (error) {
-      toast.error(error.message);
-      console.log('Error: ', error.message);
-    } else {
-      toast.success("Registro exitoso");
-      console.log('Success: ', data);
+    try {
+      const data = new FormData(e.currentTarget);
+      const password = data.get("password") as string;
+      const confirmPassword = data.get("confirmPassword") as string;
+
+      if (password !== confirmPassword) {
+        toast.error("Las contraseñas no coinciden.");
+        return;
+      }
+      const response = await signup(data);
+      if (response?.error) {
+        if (response.error === 'Password should be at least 8 characters.') {
+          return toast.error('La contraseña debe tener al menos 8 caracteres.');
+        }
+        toast.error(response.error);
+        return;
+      }
+      toast.success("Registro exitoso, se enviará un correo de confirmación.");
       setIsRegister(false);
-      setEmail("");
-      setPassword("");
-      setPasswordConfirmation("");
+    } catch (error) {
+      console.error("Error inesperado:", error);
+      toast.error("Ocurrió un error inesperado. Intenta nuevamente.");
     }
-  }
+  };
   return (
     <section className="bg-gray-200 rounded-xl max-w-md p-8 mx-auto shadow-lg">
       <h1 className="text-3xl font-semibold text-gray-700 mb-6 text-center">
@@ -89,10 +88,10 @@ function RegisterForm({ setIsRegister }: RegisterFormProps) {
           <input
             type="email"
             id="email"
+            name="email"
             className="block w-full px-4 py-2 text-sm bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-800 placeholder-gray-500 transition-all"
             placeholder="Ingresa tu correo"
             required
-            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
         <div className="mb-5">
@@ -105,10 +104,10 @@ function RegisterForm({ setIsRegister }: RegisterFormProps) {
           <input
             type="password"
             id="password"
+            name="password"
             className="block w-full px-4 py-2 text-sm bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-800 placeholder-gray-500 transition-all"
             placeholder="••••••••"
             required
-            onChange={(e) => setPassword(e.target.value)}
           />
         </div>
         <div className="mb-6">
@@ -120,11 +119,11 @@ function RegisterForm({ setIsRegister }: RegisterFormProps) {
           </label>
           <input
             type="password"
+            name="confirmPassword"
             id="confirm-password"
             className="block w-full px-4 py-2 text-sm bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-800 placeholder-gray-500 transition-all"
             placeholder="••••••••"
             required
-            onChange={(e) => setPasswordConfirmation(e.target.value)}
           />
         </div>
         <button
