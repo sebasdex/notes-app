@@ -4,8 +4,6 @@ import "../globals.css";
 import Nav from "@/components/Nav";
 import SideBar from "@/components/SideBar";
 import { NoteAppProvider } from "@/context/ContextNoteApp";
-import { redirect } from 'next/navigation'
-import { createClient } from '@/config/supabaseServer'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,11 +25,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const supabase = await createClient()
-  const { data, error } = await supabase.auth.getUser()
-  if (error || !data?.user) {
-    redirect('/login')
-  }
   return (
     <html lang="en">
       <body

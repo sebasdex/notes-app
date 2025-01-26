@@ -47,5 +47,5 @@ export async function logOut() {
   if (error) {
     redirect("/error");
   }
-  redirect("/login");
+  redirect("/");
 }

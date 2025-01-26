@@ -1,9 +1,10 @@
-function page() {
+import useRedirect from "@/hooks/useRedirect";
+
+export default async function page() {
+  await useRedirect();
   return (
-    <div>
+    <>
       <h1>Archive</h1>
-    </div>
+    </>
   );
 }
-
-export default page;
