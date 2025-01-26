@@ -49,3 +49,21 @@ export async function logOut() {
   }
   redirect("/");
 }
+
+export async function googleLogin() {
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: "http://localhost:3000/login/callback",
+    },
+  });
+  if (error) {
+    return { error: error.message };
+  }
+
+  if (data?.url) {
+    redirect(data?.url);
+  }
+  return { error: "Error al iniciar sesión." };
+}

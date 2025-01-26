@@ -1,5 +1,5 @@
 import { toast } from "sonner";
-import { login } from "@/app/(auth)/login/actions";
+import { login, googleLogin } from "@/app/(auth)/login/actions";
 interface LoginFormProps {
   setIsRegister: (value: boolean) => void;
 }
@@ -11,15 +11,15 @@ function LoginForm({ setIsRegister }: LoginFormProps) {
       const data = new FormData(e.currentTarget);
       const response = await login(data);
       if (response?.error) {
-        if (response.error === 'Invalid login credentials') {
-          toast.error('Correo o contraseña incorrectos');
+        if (response.error === "Invalid login credentials") {
+          toast.error("Correo o contraseña incorrectos");
         } else {
           toast.error(response.error);
         }
       }
     } catch (error) {
-      console.log('Error al iniciar sesión', error);
-      toast.error('Ocurrió un error inesperado, intenta de nuevo');
+      console.log("Error al iniciar sesión", error);
+      toast.error("Ocurrió un error inesperado, intenta de nuevo");
     }
   };
 
@@ -28,6 +28,7 @@ function LoginForm({ setIsRegister }: LoginFormProps) {
       <h1 className="text-3xl font-semibold text-gray-700 mb-6">Bienvenido</h1>
       <button
         type="button"
+        onClick={googleLogin}
         className="flex items-center justify-center w-full mb-6 text-white bg-gray-600 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-400 font-medium rounded-lg text-sm px-5 py-2.5 transition-all"
       >
         <svg
@@ -63,7 +64,7 @@ function LoginForm({ setIsRegister }: LoginFormProps) {
           o
         </span>
       </div>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="flex flex-col">
         <div className="mb-5">
           <label
             htmlFor="email"
@@ -99,7 +100,6 @@ function LoginForm({ setIsRegister }: LoginFormProps) {
         <button
           type="submit"
           className="w-full mt-4 px-5 py-2.5 mb-6 text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-400 rounded-lg transition-all"
-
         >
           Ingresa a tu cuenta
         </button>

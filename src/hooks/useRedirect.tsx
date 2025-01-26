@@ -6,7 +6,6 @@ const useRedirect = async () => {
   if (error || !data?.user) {
     redirect("/login");
   }
-
   return data?.user;
 };
 
