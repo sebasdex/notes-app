@@ -1,5 +1,4 @@
 import Link from "next/link";
-
 function SideBar() {
   const addIcon = (
     <svg
@@ -60,10 +59,10 @@ function SideBar() {
   return (
     <section className="sidebar">
       <ul className=" flex justify-center gap-12 w-full md:flex-col md:gap-10 md:justify-between md:w-auto">
-        <li className="flex items-center gap-4 md:flex-col">
+        <li className="flex flex-col items-center gap-4">
           <div className="flex items-center gap-4">
             <span aria-hidden="true">{addIcon}</span>
-            <p className="text-sm font-medium">Add new</p>
+            <p className="text-sm font-medium hidden md:block">Nueva nota</p>
           </div>
           <ul className="flex gap-2 md:flex-col">
             <li className="flex items-center">
@@ -82,8 +81,7 @@ function SideBar() {
               <button
                 aria-label="Add red"
                 className="h-5 w-5 rounded-full bg-red-500 hover:border-2 border-gray-300"
-              >
-              </button>
+              ></button>
             </li>
           </ul>
         </li>
