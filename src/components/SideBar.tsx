@@ -1,4 +1,7 @@
+'use client'
 import Link from "next/link";
+import { useNoteAppContext } from "@/context/useContextNoteApp";
+import { v4 as uuidv4 } from "uuid";
 function SideBar() {
   const addIcon = (
     <svg
@@ -56,6 +59,11 @@ function SideBar() {
       <line x1="14" x2="14" y1="11" y2="17" />
     </svg>
   );
+  const colorButtons = ["bg-yellow-500", "bg-blue-500", "bg-red-500"];
+  const { setTextNotes, textNotes } = useNoteAppContext();
+  const addNote = (color: string) => {
+    setTextNotes([...textNotes, { id: uuidv4(), text: "", noteColor: color }]);
+  }
   return (
     <section className="sidebar">
       <ul className=" flex justify-center gap-12 w-full md:flex-col md:gap-10 md:justify-between md:w-auto">
@@ -65,24 +73,15 @@ function SideBar() {
             <p className="text-sm font-medium hidden md:block">Nueva nota</p>
           </div>
           <ul className="flex gap-2 md:flex-col">
-            <li className="flex items-center">
-              <button
-                aria-label="Add yellow"
-                className="h-5 w-5 rounded-full bg-yellow-500 hover:border-2 border-gray-300"
-              ></button>
-            </li>
-            <li className="flex items-center">
-              <button
-                aria-label="Add blue"
-                className="h-5 w-5 rounded-full bg-blue-500 hover:border-2 border-gray-300"
-              ></button>
-            </li>
-            <li className="flex items-center">
-              <button
-                aria-label="Add red"
-                className="h-5 w-5 rounded-full bg-red-500 hover:border-2 border-gray-300"
-              ></button>
-            </li>
+            {colorButtons.map((color, index) => (
+              <li className="flex items-center" key={index}>
+                <button
+                  onClick={() => addNote(color)}
+                  aria-label={`Add ${color}`}
+                  className={`h-5 w-5 rounded-full ${color} hover:border-2 border-gray-300`}
+                ></button>
+              </li>
+            ))}
           </ul>
         </li>
         <li className="text-gray-400 md:flex-row group hover:text-gray-700">
