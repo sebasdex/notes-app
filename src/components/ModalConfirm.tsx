@@ -1,12 +1,14 @@
 function ModalConfirm({
   isAlertDelete,
   setIsAlertDelete,
+  onConfirm,
 }: {
   isAlertDelete: boolean;
   setIsAlertDelete: React.Dispatch<React.SetStateAction<boolean>>;
+  onConfirm: () => void;
 }) {
   const handleConfirm = () => {
-    console.log("Confirm delete");
+    onConfirm();
   };
   return (
     <>

@@ -8,9 +8,12 @@ interface Note {
   isDone: boolean;
 }
 function Note() {
-  const { textNotes, setTextNotes } = useNoteAppContext();
+  const { textNotes, setTextNotes, setNotesDeleted, notesDeleted } =
+    useNoteAppContext();
   const [_, setIsConfirm] = useState<boolean>(false);
   const [isAlertDelete, setIsAlertDelete] = useState<boolean>(false);
+  const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
+
   const handleAvailable = (note: Note) => {
     setTextNotes((prevState) =>
       prevState.map((txtNote) =>
@@ -29,7 +32,22 @@ function Note() {
     setIsConfirm(false);
   };
 
-  const handleDelete = () => {
+  const handleDeleteConfirm = () => {
+    if (noteToDelete) {
+      const note = textNotes.find((note) => note.id === noteToDelete);
+      if (note) {
+        setNotesDeleted((prevState) => [...prevState, note]);
+        setTextNotes((prevState) =>
+          prevState.filter((txtNote) => txtNote.id !== noteToDelete)
+        );
+      }
+      setNoteToDelete(null);
+    }
+    setIsAlertDelete(false);
+  };
+
+  const handleDelete = (id: string) => {
+    setNoteToDelete(id);
     setIsAlertDelete(true);
   };
   return (
@@ -37,6 +55,7 @@ function Note() {
       <ModalConfirm
         isAlertDelete={isAlertDelete}
         setIsAlertDelete={setIsAlertDelete}
+        onConfirm={handleDeleteConfirm}
       />
       <section className="grid grid-cols-1 gap-6 p-4 md:grid-cols-2 lg:grid-cols-4">
         {textNotes.map((note, index) => (
@@ -73,7 +92,7 @@ function Note() {
               {/* Delete Icon */}
               <button
                 onMouseDown={(e) => e.preventDefault()}
-                onClick={() => handleDelete()}
+                onClick={() => handleDelete(note.id)}
                 aria-label="delete note"
                 className={`w-10 h-10 flex items-center justify-center rounded-full bg-${note.noteColor}-700/80 hover:bg-${note.noteColor}-600  transition-transform transform hover:scale-110`}
               >
