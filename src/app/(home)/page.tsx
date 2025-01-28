@@ -1,6 +1,9 @@
+'use client'
+import Note from "@/components/Note"
+
 function page() {
   return (
-    <div>page</div>
+    <Note />
   )
 }
 
