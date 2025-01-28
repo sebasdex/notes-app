@@ -30,13 +30,15 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="grid-area-container">
-          <Nav />
-          <SideBar />
-          <main className="main">
-            <NoteAppProvider>{children}</NoteAppProvider>
-          </main>
-        </div>
+        <NoteAppProvider>
+          <div className="grid-area-container">
+            <Nav />
+            <SideBar />
+            <main className="main">
+              {children}
+            </main>
+          </div>
+        </NoteAppProvider>
       </body>
     </html>
   );
