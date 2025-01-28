@@ -1,9 +1,14 @@
 "use client";
 import { createContext, useState } from "react";
 
+interface Note {
+  id: string;
+  text: string;
+  noteColor: string;
+}
 interface NoteAppContext {
-  isLoggedIn: boolean;
-  setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
+  textNotes: Note[];
+  setTextNotes: React.Dispatch<React.SetStateAction<Note[]>>
 }
 
 export const NoteAppContext = createContext<NoteAppContext | undefined>(
@@ -13,10 +18,10 @@ export const NoteAppContext = createContext<NoteAppContext | undefined>(
 export const NoteAppProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [textNotes, setTextNotes] = useState<Note[]>([]);
 
   return (
-    <NoteAppContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
+    <NoteAppContext.Provider value={{ textNotes, setTextNotes }}>
       {children}
     </NoteAppContext.Provider>
   );
