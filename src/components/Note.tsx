@@ -127,14 +127,17 @@ function Note() {
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
                     height="24"
+                    viewBox="0 0 24 24"
                     fill="none"
                     stroke="white"
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
+                    className="lucide lucide-shield-off"
                   >
-                    <path d="M12 20h9" />
-                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
+                    <path d="m2 2 20 20" />
+                    <path d="M5 5a1 1 0 0 0-1 1v7c0 5 3.5 7.5 7.67 8.94a1 1 0 0 0 .67.01c2.35-.82 4.48-1.97 5.9-3.71" />
+                    <path d="M9.309 3.652A12.252 12.252 0 0 0 11.24 2.28a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1v7a9.784 9.784 0 0 1-.08 1.264" />
                   </svg>
                 </button>
               ) : (
@@ -148,13 +151,15 @@ function Note() {
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
                     height="24"
+                    viewBox="0 0 24 24"
                     fill="none"
                     stroke="white"
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
+                    className="lucide lucide-shield"
                   >
-                    <path d="M20 6L9 17l-5-5" />
+                    <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
                   </svg>
                 </button>
               )}
