@@ -5,10 +5,11 @@ interface Note {
   id: string;
   text: string;
   noteColor: string;
+  isDone: boolean;
 }
 interface NoteAppContext {
   textNotes: Note[];
-  setTextNotes: React.Dispatch<React.SetStateAction<Note[]>>
+  setTextNotes: React.Dispatch<React.SetStateAction<Note[]>>;
 }
 
 export const NoteAppContext = createContext<NoteAppContext | undefined>(

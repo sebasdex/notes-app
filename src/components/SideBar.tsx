@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import Link from "next/link";
 import { useNoteAppContext } from "@/context/useContextNoteApp";
 import { v4 as uuidv4 } from "uuid";
@@ -62,8 +62,11 @@ function SideBar() {
   const colorButtons = ["bg-yellow-500", "bg-blue-500", "bg-red-500"];
   const { setTextNotes, textNotes } = useNoteAppContext();
   const addNote = (color: string) => {
-    setTextNotes([...textNotes, { id: uuidv4(), text: "", noteColor: color }]);
-  }
+    setTextNotes([
+      ...textNotes,
+      { id: uuidv4(), text: "", noteColor: color, isDone: false },
+    ]);
+  };
   return (
     <section className="sidebar">
       <ul className=" flex justify-center gap-12 w-full md:flex-col md:gap-10 md:justify-between md:w-auto">
