@@ -2,7 +2,11 @@
 import Link from "next/link";
 import { useNoteAppContext } from "@/context/useContextNoteApp";
 import { v4 as uuidv4 } from "uuid";
+import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 function SideBar() {
+  const pathname = usePathname();
+  const router = useRouter();
   const addIcon = (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -62,10 +66,18 @@ function SideBar() {
   const colorButtons = ["bg-yellow-500", "bg-blue-500", "bg-red-500"];
   const { setTextNotes, textNotes } = useNoteAppContext();
   const addNote = (color: string) => {
-    setTextNotes([
-      ...textNotes,
-      { id: uuidv4(), text: "", noteColor: color, isDone: false },
-    ]);
+    if (pathname === "/trash" || pathname === "/archive") {
+      router.push("/");
+      setTextNotes([
+        ...textNotes,
+        { id: uuidv4(), text: "", noteColor: color, isDone: false },
+      ]);
+    } else {
+      setTextNotes([
+        ...textNotes,
+        { id: uuidv4(), text: "", noteColor: color, isDone: false },
+      ]);
+    }
   };
   return (
     <section className="sidebar">
