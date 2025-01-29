@@ -1,10 +1,8 @@
-'use client'
-import Note from "@/components/Note"
+"use client";
+import Note from "@/components/Note";
 
 function page() {
-  return (
-    <Note />
-  )
+  return <Note />;
 }
 
-export default page
+export default page;

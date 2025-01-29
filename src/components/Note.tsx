@@ -1,3 +1,4 @@
+"use client";
 import { useNoteAppContext } from "@/context/useContextNoteApp";
 import { useState } from "react";
 import ModalConfirm from "@/components/ModalConfirm";
@@ -8,8 +9,7 @@ interface Note {
   isDone: boolean;
 }
 function Note() {
-  const { textNotes, setTextNotes, setNotesDeleted, notesDeleted } =
-    useNoteAppContext();
+  const { textNotes, setTextNotes, setNotesDeleted } = useNoteAppContext();
   const [_, setIsConfirm] = useState<boolean>(false);
   const [isAlertDelete, setIsAlertDelete] = useState<boolean>(false);
   const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
