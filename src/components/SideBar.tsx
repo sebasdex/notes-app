@@ -68,15 +68,23 @@ function SideBar() {
   const addNote = (color: string) => {
     if (pathname === "/trash" || pathname === "/archive") {
       router.push("/");
-      setTextNotes([
-        ...textNotes,
-        { id: uuidv4(), text: "", noteColor: color, isDone: false },
-      ]);
+      setTextNotes((prev) => {
+        const addNote = [
+          ...prev,
+          { id: uuidv4(), text: "", noteColor: color, isDone: false },
+        ];
+        localStorage.setItem("textNotes", JSON.stringify(addNote));
+        return addNote;
+      });
     } else {
-      setTextNotes([
-        ...textNotes,
-        { id: uuidv4(), text: "", noteColor: color, isDone: false },
-      ]);
+      setTextNotes((prev) => {
+        const addNote = [
+          ...prev,
+          { id: uuidv4(), text: "", noteColor: color, isDone: false },
+        ];
+        localStorage.setItem("textNotes", JSON.stringify(addNote));
+        return addNote;
+      });
     }
   };
   return (

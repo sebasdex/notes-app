@@ -1,6 +1,6 @@
 "use client";
 import { useNoteAppContext } from "@/context/useContextNoteApp";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ModalConfirm from "@/components/ModalConfirm";
 interface Note {
   id: string;
@@ -14,21 +14,32 @@ function Note() {
   const [isAlertDelete, setIsAlertDelete] = useState<boolean>(false);
   const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (textNotes.length === 0) {
+      const notes = JSON.parse(localStorage.getItem("textNotes") || "[]");
+      setTextNotes(notes);
+    }
+  }, [textNotes, setTextNotes]);
+
   const handleAvailable = (note: Note) => {
-    setTextNotes((prevState) =>
-      prevState.map((txtNote) =>
+    setTextNotes((prevState) => {
+      const noteProtected = prevState.map((txtNote) =>
         txtNote.id === note.id ? { ...note, isDone: !note.isDone } : txtNote
-      )
-    );
+      );
+      localStorage.setItem("textNotes", JSON.stringify(noteProtected));
+      return noteProtected;
+    });
     setIsConfirm(true);
   };
 
   const handleUnavailable = (note: Note) => {
-    setTextNotes((prevState) =>
-      prevState.map((txtNote) =>
+    setTextNotes((prevState) => {
+      const noteUnProtected = prevState.map((txtNote) =>
         txtNote.id === note.id ? { ...note, isDone: !note.isDone } : txtNote
-      )
-    );
+      );
+      localStorage.setItem("textNotes", JSON.stringify(noteUnProtected));
+      return noteUnProtected;
+    });
     setIsConfirm(false);
   };
 
@@ -37,9 +48,13 @@ function Note() {
       const note = textNotes.find((note) => note.id === noteToDelete);
       if (note) {
         setNotesDeleted((prevState) => [...prevState, note]);
-        setTextNotes((prevState) =>
-          prevState.filter((txtNote) => txtNote.id !== noteToDelete)
-        );
+        setTextNotes((prevState) => {
+          const deleteNote = prevState.filter(
+            (txtNote) => txtNote.id !== noteToDelete
+          );
+          localStorage.setItem("textNotes", JSON.stringify(deleteNote));
+          return deleteNote;
+        });
       }
       setNoteToDelete(null);
     }
@@ -72,16 +87,18 @@ function Note() {
               className={`text-white text-lg placeholder-white/80 p-4
                  rounded-md w-full h-48 resize-none border-none outline-none ${note.noteColor} disabled:cursor-not-allowed`}
               onChange={(e) =>
-                setTextNotes(
-                  textNotes.map((txtNote) =>
+                setTextNotes((prev) => {
+                  const noteChanged = prev.map((txtNote) =>
                     txtNote.id === note.id
-                      ? {
-                          ...note,
-                          text: e.target.value,
-                        }
+                      ? { ...note, text: e.target.value }
                       : txtNote
-                  )
-                )
+                  );
+                  localStorage.setItem(
+                    "textNotes",
+                    JSON.stringify(noteChanged)
+                  );
+                  return noteChanged;
+                })
               }
               value={note.text}
               autoFocus
