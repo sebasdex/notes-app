@@ -1,11 +1,18 @@
 "use client";
 import ModalConfirm from "@/components/ModalConfirm";
 import { useNoteAppContext } from "@/context/useContextNoteApp";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 function TrashNotes() {
   const { setNotesDeleted, notesDeleted } = useNoteAppContext();
   const [isAlertDelete, setIsAlertDelete] = useState<boolean>(false);
   const [trashNotes, setTrashNotes] = useState<string | null>(null);
+
+  useEffect(() => {
+    const notes = JSON.parse(localStorage.getItem("notesDeleted") || "[]");
+    if (notes.length > 0) {
+      setNotesDeleted(notes);
+    }
+  }, []);
 
   const handleDelete = (id: string) => {
     setTrashNotes(id);
