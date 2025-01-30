@@ -58,7 +58,7 @@ function Note() {
         onConfirm={handleDeleteConfirm}
         message="¿Estás seguro de eliminar esta nota?"
       />
-      <section className="grid grid-cols-1 gap-6 p-4 md:grid-cols-2 lg:grid-cols-4">
+      <section className="grid grid-cols-1 gap-6 mt-6 md:grid-cols-2 lg:grid-cols-4">
         {textNotes.map((note, index) => (
           <div
             key={note.id}
@@ -86,7 +86,7 @@ function Note() {
               value={note.text}
               autoFocus
               disabled={note.isDone}
-              placeholder="Escribe aquí tu nota"
+              placeholder="Escribe aquí..."
             ></textarea>
             {/* Footer */}
             <div className="flex justify-between mt-4 px-2 py-2 rounded-lg bg-white/20 backdrop-blur-md">

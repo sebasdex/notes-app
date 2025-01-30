@@ -83,9 +83,8 @@ function SideBar() {
     <section className="sidebar">
       <ul className=" flex justify-center gap-12 w-full md:flex-col md:gap-10 md:justify-between md:w-auto">
         <li className="flex flex-col items-center gap-4">
-          <Link href={"/"} className="flex items-center gap-4">
+          <Link href={"/"} className="gap-4">
             <span aria-hidden="true">{addIcon}</span>
-            <p className="text-sm font-medium hidden md:block">Nueva nota</p>
           </Link>
           <ul className="flex gap-2 md:flex-col">
             {colorButtons.map((color, index) => (
