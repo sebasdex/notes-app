@@ -15,11 +15,11 @@ function Note() {
   const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
 
   useEffect(() => {
-    if (textNotes.length === 0) {
-      const notes = JSON.parse(localStorage.getItem("textNotes") || "[]");
+    const notes = JSON.parse(localStorage.getItem("textNotes") || "[]");
+    if (notes.length > 0) {
       setTextNotes(notes);
     }
-  }, [textNotes, setTextNotes]);
+  }, []);
 
   const handleAvailable = (note: Note) => {
     setTextNotes((prevState) => {
@@ -47,7 +47,11 @@ function Note() {
     if (noteToDelete) {
       const note = textNotes.find((note) => note.id === noteToDelete);
       if (note) {
-        setNotesDeleted((prevState) => [...prevState, note]);
+        setNotesDeleted((prevState) => {
+          const trashNotes = [...prevState, note];
+          localStorage.setItem("notesDeleted", JSON.stringify(trashNotes));
+          return trashNotes;
+        });
         setTextNotes((prevState) => {
           const deleteNote = prevState.filter(
             (txtNote) => txtNote.id !== noteToDelete
