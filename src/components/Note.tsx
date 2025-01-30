@@ -1,74 +1,28 @@
 "use client";
-import { useNoteAppContext } from "@/context/useContextNoteApp";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import ModalConfirm from "@/components/ModalConfirm";
-interface Note {
-  id: string;
-  text: string;
-  noteColor: string;
-  isDone: boolean;
-}
-function Note() {
-  const { textNotes, setTextNotes, setNotesDeleted } = useNoteAppContext();
-  const [_, setIsConfirm] = useState<boolean>(false);
-  const [isAlertDelete, setIsAlertDelete] = useState<boolean>(false);
-  const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
+import { useNoteActions } from "@/hooks/useNoteActions";
 
+function Note() {
+  const {
+    textNotes,
+    setTextNotes,
+    isAlertDelete,
+    setIsAlertDelete,
+    handleDeleteConfirm,
+    handleDelete,
+    handleAvailable,
+    handleUnavailable,
+    deleteIcon,
+    unProtectedIcon,
+    protectIcon,
+  } = useNoteActions();
   useEffect(() => {
     const notes = JSON.parse(localStorage.getItem("textNotes") || "[]");
     if (notes.length > 0) {
       setTextNotes(notes);
     }
   }, []);
-
-  const handleAvailable = (note: Note) => {
-    setTextNotes((prevState) => {
-      const noteProtected = prevState.map((txtNote) =>
-        txtNote.id === note.id ? { ...note, isDone: !note.isDone } : txtNote
-      );
-      localStorage.setItem("textNotes", JSON.stringify(noteProtected));
-      return noteProtected;
-    });
-    setIsConfirm(true);
-  };
-
-  const handleUnavailable = (note: Note) => {
-    setTextNotes((prevState) => {
-      const noteUnProtected = prevState.map((txtNote) =>
-        txtNote.id === note.id ? { ...note, isDone: !note.isDone } : txtNote
-      );
-      localStorage.setItem("textNotes", JSON.stringify(noteUnProtected));
-      return noteUnProtected;
-    });
-    setIsConfirm(false);
-  };
-
-  const handleDeleteConfirm = () => {
-    if (noteToDelete) {
-      const note = textNotes.find((note) => note.id === noteToDelete);
-      if (note) {
-        setNotesDeleted((prevState) => {
-          const trashNotes = [...prevState, note];
-          localStorage.setItem("notesDeleted", JSON.stringify(trashNotes));
-          return trashNotes;
-        });
-        setTextNotes((prevState) => {
-          const deleteNote = prevState.filter(
-            (txtNote) => txtNote.id !== noteToDelete
-          );
-          localStorage.setItem("textNotes", JSON.stringify(deleteNote));
-          return deleteNote;
-        });
-      }
-      setNoteToDelete(null);
-    }
-    setIsAlertDelete(false);
-  };
-
-  const handleDelete = (id: string) => {
-    setNoteToDelete(id);
-    setIsAlertDelete(true);
-  };
   return (
     <>
       <ModalConfirm
@@ -111,78 +65,34 @@ function Note() {
             ></textarea>
             {/* Footer */}
             <div className="flex justify-between mt-4 px-2 py-2 rounded-lg bg-white/20 backdrop-blur-md">
-              {/* Delete Icon */}
+              {/* Delete Button */}
               <button
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => handleDelete(note.id)}
                 aria-label="delete note"
                 className={`w-10 h-10 flex items-center justify-center rounded-full bg-${note.noteColor}-700/80 hover:bg-${note.noteColor}-600  transition-transform transform hover:scale-110`}
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="white"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="lucide lucide-trash-2"
-                >
-                  <path d="M3 6h18" />
-                  <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-                  <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-                  <line x1="10" x2="10" y1="11" y2="17" />
-                  <line x1="14" x2="14" y1="11" y2="17" />
-                </svg>
+                {deleteIcon}
               </button>
-              {/* Edit Icon */}
+              {/* Unprotected Button */}
               {note.isDone ? (
                 <button
                   onClick={() => handleUnavailable(note)}
                   onMouseDown={(e) => e.preventDefault()}
-                  aria-label="Editar nota"
+                  aria-label="protect-note"
                   className={`w-10 h-10 flex items-center justify-center rounded-full bg-${note.noteColor}-700/80 hover:bg-${note.noteColor}-600  transition-transform transform hover:scale-110`}
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="white"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="lucide lucide-shield-off"
-                  >
-                    <path d="m2 2 20 20" />
-                    <path d="M5 5a1 1 0 0 0-1 1v7c0 5 3.5 7.5 7.67 8.94a1 1 0 0 0 .67.01c2.35-.82 4.48-1.97 5.9-3.71" />
-                    <path d="M9.309 3.652A12.252 12.252 0 0 0 11.24 2.28a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1v7a9.784 9.784 0 0 1-.08 1.264" />
-                  </svg>
+                  {unProtectedIcon}
                 </button>
               ) : (
+                // protect button
                 <button
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => handleAvailable(note)}
                   aria-label="Confirmar nota"
                   className={`w-10 h-10 flex items-center justify-center rounded-full bg-${note.noteColor}-700/80 hover:bg-${note.noteColor}-600  transition-transform transform hover:scale-110`}
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="white"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="lucide lucide-shield"
-                  >
-                    <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
-                  </svg>
+                  {protectIcon}
                 </button>
               )}
             </div>
