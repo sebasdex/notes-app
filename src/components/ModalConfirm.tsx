@@ -2,10 +2,12 @@ function ModalConfirm({
   isAlertDelete,
   setIsAlertDelete,
   onConfirm,
+  message,
 }: {
   isAlertDelete: boolean;
   setIsAlertDelete: React.Dispatch<React.SetStateAction<boolean>>;
   onConfirm: () => void;
+  message: string;
 }) {
   const handleConfirm = () => {
     onConfirm();
@@ -55,7 +57,7 @@ function ModalConfirm({
                 />
               </svg>
               <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-                ¿Estás seguro de eliminar esta nota?
+                {message}
               </h3>
               <button
                 data-modal-hide="popup-modal"

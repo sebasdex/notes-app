@@ -56,6 +56,7 @@ function Note() {
         isAlertDelete={isAlertDelete}
         setIsAlertDelete={setIsAlertDelete}
         onConfirm={handleDeleteConfirm}
+        message="¿Estás seguro de eliminar esta nota?"
       />
       <section className="grid grid-cols-1 gap-6 p-4 md:grid-cols-2 lg:grid-cols-4">
         {textNotes.map((note, index) => (
