@@ -23,9 +23,16 @@ function TrashNotes() {
     if (trashNotes) {
       const note = notesDeleted.find((note) => note.id === trashNotes);
       if (note) {
-        setNotesDeleted((prevState) =>
-          prevState.filter((txtNote) => txtNote.id !== trashNotes)
-        );
+        setNotesDeleted((prevState) => {
+          const deleteTrashNotes = prevState.filter(
+            (txtNote) => txtNote.id !== trashNotes
+          );
+          localStorage.setItem(
+            "notesDeleted",
+            JSON.stringify(deleteTrashNotes)
+          );
+          return deleteTrashNotes;
+        });
       }
       setTrashNotes(null);
     }
