@@ -64,23 +64,41 @@ function SideBar() {
     </svg>
   );
   const colorButtons = ["bg-yellow-500", "bg-blue-500", "bg-red-500"];
-  const { setTextNotes, textNotes } = useNoteAppContext();
+  const { setTextNotes } = useNoteAppContext();
   const addNote = (color: string) => {
     if (pathname === "/trash" || pathname === "/archive") {
       router.push("/");
       setTextNotes((prev) => {
+        const dateNoteCreate = new Date().toLocaleDateString("es-ES");
+        const hourDateCreate = new Date().toLocaleTimeString("es-ES");
         const addNote = [
           ...prev,
-          { id: uuidv4(), text: "", noteColor: color, isDone: false },
+          {
+            id: uuidv4(),
+            text: "",
+            noteColor: color,
+            isDone: false,
+            date: dateNoteCreate,
+            hour: hourDateCreate,
+          },
         ];
         localStorage.setItem("textNotes", JSON.stringify(addNote));
         return addNote;
       });
     } else {
       setTextNotes((prev) => {
+        const dateNoteCreate = new Date().toLocaleDateString("es-ES");
+        const hourDateCreate = new Date().toLocaleTimeString("es-ES");
         const addNote = [
           ...prev,
-          { id: uuidv4(), text: "", noteColor: color, isDone: false },
+          {
+            id: uuidv4(),
+            text: "",
+            noteColor: color,
+            isDone: false,
+            date: dateNoteCreate,
+            hour: hourDateCreate,
+          },
         ];
         localStorage.setItem("textNotes", JSON.stringify(addNote));
         return addNote;

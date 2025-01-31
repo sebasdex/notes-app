@@ -6,6 +6,8 @@ interface Note {
   text: string;
   noteColor: string;
   isDone: boolean;
+  date: string;
+  hour: string;
 }
 interface NoteAppContext {
   textNotes: Note[];

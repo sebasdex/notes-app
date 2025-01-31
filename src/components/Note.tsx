@@ -16,6 +16,8 @@ function Note() {
     deleteIcon,
     unProtectedIcon,
     protectIcon,
+    dateIcon,
+    hourIcon,
   } = useNoteActions();
   useEffect(() => {
     const notes = JSON.parse(localStorage.getItem("textNotes") || "[]");
@@ -38,6 +40,17 @@ function Note() {
             className={`relative p-4 focus-within:ring-2 focus-within:ring-black rounded-lg w-full transform opacity-0 translate-y-10 animate-slide-in ${note.noteColor}`}
             style={{ animationDelay: `${index * 100}ms` }}
           >
+            <div className="flex justify-between px-2 py-2 rounded-lg text-white/60 text-sm font-semibold">
+              <div className="flex items-center gap-2">
+                <span>{dateIcon}</span>
+                <span>{note.date}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span>{hourIcon}</span>
+                <span>{note.hour}</span>
+              </div>
+            </div>
+            <hr className="opacity-30 mx-2" />
             {/* Textarea */}
             <textarea
               name="note"
