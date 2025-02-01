@@ -7,6 +7,7 @@ import DateIcon from "@/icons/DateIcon";
 import TimeIcon from "@/icons/TimeIcon";
 import ProtectIcon from "@/icons/ProtectIcon";
 import UnProtectedIcon from "@/icons/UnProtectedIcon";
+import ArchiveIcon from "@/icons/ArchiveIcon";
 
 function Note() {
   const {
@@ -91,6 +92,14 @@ function Note() {
                   stroke="white"
                   strokeWidth={2}
                 />
+              </button>
+              {/* Archive Button */}
+              <button
+                onMouseDown={(e) => e.preventDefault()}
+                aria-label="archive note"
+                className={`w-10 h-10 flex items-center justify-center rounded-full bg-${note.noteColor}-700/80 hover:bg-${note.noteColor}-600  transition-transform transform hover:scale-110`}
+              >
+                <ArchiveIcon stroke="white" />
               </button>
               {/* Unprotected Button */}
               {note.isDone ? (

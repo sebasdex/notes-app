@@ -6,6 +6,7 @@ import DateIcon from "@/icons/DateIcon";
 import TimeIcon from "@/icons/TimeIcon";
 import TrashIcon from "@/icons/TrashIcon";
 import ReturnIcon from "@/icons/ReturnIcon";
+import ArchiveIcon from "@/icons/ArchiveIcon";
 function TrashNotes() {
   const {
     setIsAlertDelete,
@@ -73,6 +74,14 @@ function TrashNotes() {
                   strokeWidth={2}
                   stroke="white"
                 />
+              </button>
+              {/* Archive Icon */}
+              <button
+                onMouseDown={(e) => e.preventDefault()}
+                aria-label="archive note"
+                className={`w-10 h-10 flex items-center justify-center rounded-full bg-${note.noteColor}-700/80 hover:bg-${note.noteColor}-600  transition-transform transform hover:scale-110`}
+              >
+                <ArchiveIcon stroke="white" />
               </button>
               {/* Return Icon */}
               <button
