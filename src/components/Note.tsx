@@ -2,6 +2,11 @@
 import { useEffect } from "react";
 import ModalConfirm from "@/components/ModalConfirm";
 import { useNoteActions } from "@/hooks/useNoteActions";
+import TrashIcon from "@/icons/TrashIcon";
+import DateIcon from "@/icons/DateIcon";
+import TimeIcon from "@/icons/TimeIcon";
+import ProtectIcon from "@/icons/ProtectIcon";
+import UnProtectedIcon from "@/icons/UnProtectedIcon";
 
 function Note() {
   const {
@@ -13,11 +18,6 @@ function Note() {
     handleDelete,
     handleAvailable,
     handleUnavailable,
-    deleteIcon,
-    unProtectedIcon,
-    protectIcon,
-    dateIcon,
-    hourIcon,
   } = useNoteActions();
   useEffect(() => {
     const notes = JSON.parse(localStorage.getItem("textNotes") || "[]");
@@ -42,11 +42,11 @@ function Note() {
           >
             <div className="flex justify-between px-2 py-2 rounded-lg text-white/60 text-sm font-semibold">
               <div className="flex items-center gap-2">
-                <span>{dateIcon}</span>
+                <DateIcon />
                 <span>{note.date}</span>
               </div>
               <div className="flex items-center gap-2">
-                <span>{hourIcon}</span>
+                <TimeIcon />
                 <span>{note.hour}</span>
               </div>
             </div>
@@ -85,7 +85,12 @@ function Note() {
                 aria-label="delete note"
                 className={`w-10 h-10 flex items-center justify-center rounded-full bg-${note.noteColor}-700/80 hover:bg-${note.noteColor}-600  transition-transform transform hover:scale-110`}
               >
-                {deleteIcon}
+                <TrashIcon
+                  width={24}
+                  height={24}
+                  stroke="white"
+                  strokeWidth={2}
+                />
               </button>
               {/* Unprotected Button */}
               {note.isDone ? (
@@ -95,7 +100,7 @@ function Note() {
                   aria-label="protect-note"
                   className={`w-10 h-10 flex items-center justify-center rounded-full bg-${note.noteColor}-700/80 hover:bg-${note.noteColor}-600  transition-transform transform hover:scale-110`}
                 >
-                  {unProtectedIcon}
+                  <UnProtectedIcon />
                 </button>
               ) : (
                 // protect button
@@ -105,7 +110,7 @@ function Note() {
                   aria-label="Confirmar nota"
                   className={`w-10 h-10 flex items-center justify-center rounded-full bg-${note.noteColor}-700/80 hover:bg-${note.noteColor}-600  transition-transform transform hover:scale-110`}
                 >
-                  {protectIcon}
+                  <ProtectIcon />
                 </button>
               )}
             </div>

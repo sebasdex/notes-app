@@ -2,18 +2,18 @@
 import ModalConfirm from "@/components/ModalConfirm";
 import { useEffect } from "react";
 import { useTrashNoteActions } from "@/hooks/useTrashNoteActions";
+import DateIcon from "@/icons/DateIcon";
+import TimeIcon from "@/icons/TimeIcon";
+import TrashIcon from "@/icons/TrashIcon";
+import ReturnIcon from "@/icons/ReturnIcon";
 function TrashNotes() {
   const {
     setIsAlertDelete,
-    deleteIcon,
-    returnIcon,
     setNotesDeleted,
     isAlertDelete,
     handleDeleteConfirm,
     notesDeleted,
     handleDelete,
-    dateIcon,
-    hourIcon,
   } = useTrashNoteActions();
   useEffect(() => {
     const notes = JSON.parse(localStorage.getItem("notesDeleted") || "[]");
@@ -39,11 +39,11 @@ function TrashNotes() {
           >
             <div className="flex justify-between px-2 py-2 rounded-lg text-white/60 text-sm font-semibold">
               <div className="flex items-center gap-2">
-                <span>{dateIcon}</span>
+                <DateIcon />
                 <span>{note.date}</span>
               </div>
               <div className="flex items-center gap-2">
-                <span>{hourIcon}</span>
+                <TimeIcon />
                 <span>{note.hour}</span>
               </div>
             </div>
@@ -67,7 +67,12 @@ function TrashNotes() {
                 onClick={() => handleDelete(note.id)}
                 className={`w-10 h-10 flex items-center justify-center rounded-full bg-${note.noteColor}-700/80 hover:bg-${note.noteColor}-600  transition-transform transform hover:scale-110`}
               >
-                {deleteIcon}
+                <TrashIcon
+                  width={24}
+                  height={24}
+                  strokeWidth={2}
+                  stroke="white"
+                />
               </button>
               {/* Return Icon */}
               <button
@@ -75,7 +80,7 @@ function TrashNotes() {
                 aria-label="return note"
                 className={`w-10 h-10 flex items-center justify-center rounded-full bg-${note.noteColor}-700/80 hover:bg-${note.noteColor}-600  transition-transform transform hover:scale-110`}
               >
-                {returnIcon}
+                <ReturnIcon />
               </button>
             </div>
           </div>
