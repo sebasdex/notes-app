@@ -15,7 +15,7 @@ function ModalConfirm({
   return (
     <>
       {isAlertDelete ? (
-        <div className="absolute bg-black/30 inset-0 flex items-center justify-center w-full max-h-full z-50">
+        <div className="fixed bg-black/30 inset-0 flex items-center justify-center w-full max-h-full z-50">
           <div className="relative bg-white rounded-lg">
             <button
               type="button"

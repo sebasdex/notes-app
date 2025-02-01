@@ -31,7 +31,7 @@ function NavClient({ user }: { user: User | null }) {
 
   return (
     <header className="w-full flex flex-col md:flex-row md:justify-between items-center gap-4 p-4 nav">
-      <div className="min-w-fit">
+      <div className="min-w-fit md:ml-8">
         <Link href="/">
           <h1 className="text-2xl font-bold text-blue-900">Note App</h1>
         </Link>
@@ -46,7 +46,7 @@ function NavClient({ user }: { user: User | null }) {
       </div>
       {!user ? (
         <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded md:mr-2"
           onClick={() => router.push("/login")}
         >
           Iniciar sesión
