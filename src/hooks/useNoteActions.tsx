@@ -10,7 +10,8 @@ interface Note {
 }
 
 export const useNoteActions = () => {
-  const { textNotes, setTextNotes, setNotesDeleted } = useNoteAppContext();
+  const { textNotes, setTextNotes, setNotesDeleted, setNotesArchived } =
+    useNoteAppContext();
   const [isAlertDelete, setIsAlertDelete] = useState<boolean>(false);
   const [_, setIsConfirm] = useState<boolean>(false);
   const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
@@ -62,6 +63,24 @@ export const useNoteActions = () => {
     setNoteToDelete(id);
     setIsAlertDelete(true);
   };
+
+  const handleArchive = (note: Note) => {
+    const noteID = textNotes.find((txtNote) => txtNote.id === note.id);
+    if (noteID) {
+      setNotesArchived((prevState) => {
+        const archiveNotes = [...prevState, noteID];
+        localStorage.setItem("notesArchived", JSON.stringify(archiveNotes));
+        return archiveNotes;
+      });
+      setTextNotes((prevState) => {
+        const archiveNote = prevState.filter(
+          (txtNote) => txtNote.id !== note.id
+        );
+        localStorage.setItem("textNotes", JSON.stringify(archiveNote));
+        return archiveNote;
+      });
+    }
+  };
   return {
     handleUnavailable,
     handleAvailable,
@@ -72,5 +91,6 @@ export const useNoteActions = () => {
     noteToDelete,
     textNotes,
     setTextNotes,
+    handleArchive,
   };
 };

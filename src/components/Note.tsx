@@ -19,6 +19,7 @@ function Note() {
     handleDelete,
     handleAvailable,
     handleUnavailable,
+    handleArchive,
   } = useNoteActions();
   useEffect(() => {
     const notes = JSON.parse(localStorage.getItem("textNotes") || "[]");
@@ -96,6 +97,7 @@ function Note() {
               {/* Archive Button */}
               <button
                 onMouseDown={(e) => e.preventDefault()}
+                onClick={() => handleArchive(note)}
                 aria-label="archive note"
                 className={`w-10 h-10 flex items-center justify-center rounded-full bg-${note.noteColor}-700/80 hover:bg-${note.noteColor}-600  transition-transform transform hover:scale-110`}
               >

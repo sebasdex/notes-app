@@ -1,0 +1,119 @@
+"use client";
+import { useNoteAppContext } from "@/context/useContextNoteApp";
+import ArchiveIcon from "@/icons/ArchiveIcon";
+import DateIcon from "@/icons/DateIcon";
+import ReturnIcon from "@/icons/ReturnIcon";
+import TimeIcon from "@/icons/TimeIcon";
+import TrashIcon from "@/icons/TrashIcon";
+import { useEffect, useState } from "react";
+import ModalConfirm from "./ModalConfirm";
+
+function ArchivedNotes() {
+  const { notesArchived, setNotesArchived, setNotesDeleted } =
+    useNoteAppContext();
+  const [isAlertDelete, setIsAlertDelete] = useState<boolean>(false);
+  const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
+  useEffect(() => {
+    const notes = JSON.parse(localStorage.getItem("notesArchived") || "[]");
+    if (notes.length > 0) {
+      setNotesArchived(notes);
+    }
+  }, []);
+
+  const handleDeleteConfirm = () => {
+    if (noteToDelete) {
+      const note = notesArchived.find((note) => note.id === noteToDelete);
+      if (note) {
+        setNotesDeleted((prevState) => {
+          const trashNotes = [...prevState, note];
+          localStorage.setItem("notesDeleted", JSON.stringify(trashNotes));
+          return trashNotes;
+        });
+        setNotesArchived((prevState) => {
+          const deleteNote = prevState.filter(
+            (txtNote) => txtNote.id !== noteToDelete
+          );
+          localStorage.setItem("notesArchived", JSON.stringify(deleteNote));
+          return deleteNote;
+        });
+      }
+      setNoteToDelete(null);
+    }
+    setIsAlertDelete(false);
+  };
+
+  const handleDelete = (id: string) => {
+    setNoteToDelete(id);
+    setIsAlertDelete(true);
+  };
+
+  return (
+    <>
+      <ModalConfirm
+        isAlertDelete={isAlertDelete}
+        setIsAlertDelete={setIsAlertDelete}
+        onConfirm={handleDeleteConfirm}
+        message="¿Estás seguro de eliminar esta nota?"
+      />
+
+      <section className="grid grid-cols-1 gap-6 mt-6 md:grid-cols-2 lg:grid-cols-4">
+        {notesArchived.map((note, index) => (
+          <div
+            key={note.id}
+            className={`relative p-4 focus-within:ring-2 focus-within:ring-black rounded-lg w-full transform opacity-0 translate-y-10 animate-slide-in ${note.noteColor}`}
+            style={{ animationDelay: `${index * 100}ms` }}
+          >
+            <div className="flex justify-between px-2 py-2 rounded-lg text-white/60 text-sm font-semibold">
+              <div className="flex items-center gap-2">
+                <DateIcon />
+                <span>{note.date}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <TimeIcon />
+                <span>{note.hour}</span>
+              </div>
+            </div>
+            <hr className="opacity-30 mx-2" />
+            {/* Textarea */}
+            <textarea
+              name="note"
+              id={`note-${note.id}`}
+              className={`text-white text-lg placeholder-white/80 p-4
+             rounded-md w-full h-48 resize-none border-none outline-none ${note.noteColor} disabled:cursor-not-allowed`}
+              value={note.text}
+              autoFocus
+              disabled={true}
+            ></textarea>
+            {/* Footer */}
+            <div className="flex justify-between mt-4 px-2 py-2 rounded-lg bg-white/20 backdrop-blur-md">
+              {/* Delete Icon */}
+              <button
+                onClick={() => handleDelete(note.id)}
+                onMouseDown={(e) => e.preventDefault()}
+                aria-label="delete note"
+                className={`w-10 h-10 flex items-center justify-center rounded-full bg-${note.noteColor}-700/80 hover:bg-${note.noteColor}-600  transition-transform transform hover:scale-110`}
+              >
+                <TrashIcon
+                  width={24}
+                  height={24}
+                  strokeWidth={2}
+                  stroke="white"
+                />
+              </button>
+              {/* Return Icon */}
+              <button
+                onMouseDown={(e) => e.preventDefault()}
+                aria-label="return note"
+                className={`w-10 h-10 flex items-center justify-center rounded-full bg-${note.noteColor}-700/80 hover:bg-${note.noteColor}-600  transition-transform transform hover:scale-110`}
+              >
+                <ReturnIcon />
+              </button>
+            </div>
+          </div>
+        ))}
+      </section>
+    </>
+  );
+}
+
+export default ArchivedNotes;
