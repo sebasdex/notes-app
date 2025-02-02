@@ -11,10 +11,14 @@ function NavClient({ user }: { user: User | null }) {
   const menuRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
 
-  const handleLogOut = () => {
+  const handleLogOut = async () => {
+    const respomnse = await logOut();
+    if (respomnse.error) {
+      alert(respomnse.error);
+      return;
+    }
+    router.replace("/");
     setIsOpen(false);
-    router.push("/");
-    logOut();
   };
 
   useEffect(() => {

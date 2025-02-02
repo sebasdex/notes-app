@@ -19,7 +19,7 @@ export async function login(formData: FormData) {
   if (error) {
     return { error: error.message };
   }
-  redirect("/");
+  throw redirect("/");
 }
 
 export async function signup(formData: FormData) {
@@ -45,9 +45,9 @@ export async function logOut() {
   const supabase = await createClient();
   const { error } = await supabase.auth.signOut();
   if (error) {
-    redirect("/error");
+    return { error: error.message };
   }
-  redirect("/");
+  return { success: true };
 }
 
 export async function googleLogin() {
@@ -63,7 +63,7 @@ export async function googleLogin() {
   }
 
   if (data?.url) {
-    redirect(data?.url);
+    throw redirect(data?.url);
   }
   return { error: "Error al iniciar sesión." };
 }
