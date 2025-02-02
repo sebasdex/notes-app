@@ -1,51 +1,28 @@
 "use client";
-import { useNoteAppContext } from "@/context/useContextNoteApp";
-import ArchiveIcon from "@/icons/ArchiveIcon";
 import DateIcon from "@/icons/DateIcon";
 import ReturnIcon from "@/icons/ReturnIcon";
 import TimeIcon from "@/icons/TimeIcon";
 import TrashIcon from "@/icons/TrashIcon";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import ModalConfirm from "./ModalConfirm";
+import { useNoteArchiveActions } from "@/hooks/useNoteArchiveActions";
 
 function ArchivedNotes() {
-  const { notesArchived, setNotesArchived, setNotesDeleted } =
-    useNoteAppContext();
-  const [isAlertDelete, setIsAlertDelete] = useState<boolean>(false);
-  const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
+  const {
+    notesArchived,
+    setNotesArchived,
+    isAlertDelete,
+    setIsAlertDelete,
+    handleDelete,
+    handleDeleteConfirm,
+  } = useNoteArchiveActions();
+
   useEffect(() => {
     const notes = JSON.parse(localStorage.getItem("notesArchived") || "[]");
     if (notes.length > 0) {
       setNotesArchived(notes);
     }
   }, []);
-
-  const handleDeleteConfirm = () => {
-    if (noteToDelete) {
-      const note = notesArchived.find((note) => note.id === noteToDelete);
-      if (note) {
-        setNotesDeleted((prevState) => {
-          const trashNotes = [...prevState, note];
-          localStorage.setItem("notesDeleted", JSON.stringify(trashNotes));
-          return trashNotes;
-        });
-        setNotesArchived((prevState) => {
-          const deleteNote = prevState.filter(
-            (txtNote) => txtNote.id !== noteToDelete
-          );
-          localStorage.setItem("notesArchived", JSON.stringify(deleteNote));
-          return deleteNote;
-        });
-      }
-      setNoteToDelete(null);
-    }
-    setIsAlertDelete(false);
-  };
-
-  const handleDelete = (id: string) => {
-    setNoteToDelete(id);
-    setIsAlertDelete(true);
-  };
 
   return (
     <>
