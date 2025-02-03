@@ -7,51 +7,59 @@ import { useRouter } from "next/navigation";
 import TrashIcon from "@/icons/TrashIcon";
 import ArchiveIcon from "@/icons/ArchiveIcon";
 import AddIcon from "@/icons/AddIcon";
+import { createClient } from "@/config/supabaseClient";
+
 function SideBar() {
   const pathname = usePathname();
   const router = useRouter();
   const colorButtons = ["bg-yellow-500", "bg-blue-500", "bg-red-500"];
-  const { setTextNotes } = useNoteAppContext();
-  const addNote = (color: string) => {
+  const { setTextNotes, textNotes } = useNoteAppContext();
+  const supabase = createClient();
+  const dateNoteCreate = new Date().toLocaleDateString("es-ES");
+  const hourDateCreate = new Date().toLocaleTimeString("es-ES");
+
+  /* AddNote Function */
+  const addNote = async (color: string) => {
     if (pathname === "/trash" || pathname === "/archive") {
       router.push("/");
-      setTextNotes((prev) => {
-        const dateNoteCreate = new Date().toLocaleDateString("es-ES");
-        const hourDateCreate = new Date().toLocaleTimeString("es-ES");
-        const addNote = [
-          ...prev,
-          {
-            id: uuidv4(),
-            textNote: "",
-            noteColor: color,
-            isDone: false,
-            date: dateNoteCreate,
-            hour: hourDateCreate,
-          },
-        ];
-        localStorage.setItem("textNotes", JSON.stringify(addNote));
-        return addNote;
+    }
+    const newNote = {
+      id: uuidv4(),
+      textNote: "",
+      noteColor: color,
+      isDone: false,
+      date: dateNoteCreate,
+      hour: hourDateCreate,
+    };
+
+    try {
+      const { data } = await supabase.auth.getUser();
+      const userId = data?.user?.id;
+      if (!userId) {
+        setTextNotes((prev) => {
+          const updatedNotes = [...prev, newNote];
+          localStorage.setItem("textNotes", JSON.stringify(updatedNotes));
+          return updatedNotes;
+        });
+        return;
+      }
+
+      setTextNotes((prev) => [...prev, newNote]);
+      const response = await fetch("/api/newNote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newNote),
       });
-    } else {
-      setTextNotes((prev) => {
-        const dateNoteCreate = new Date().toLocaleDateString("es-ES");
-        const hourDateCreate = new Date().toLocaleTimeString("es-ES");
-        const addNote = [
-          ...prev,
-          {
-            id: uuidv4(),
-            textNote: "",
-            noteColor: color,
-            isDone: false,
-            date: dateNoteCreate,
-            hour: hourDateCreate,
-          },
-        ];
-        localStorage.setItem("textNotes", JSON.stringify(addNote));
-        return addNote;
-      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || "Error desconocido al insertar notas");
+      }
+    } catch (error) {
+      console.error("❌ Error al sincronizar notas:", error);
     }
   };
+
   return (
     <section className="sidebar">
       <ul className=" flex justify-center gap-12 w-full md:flex-col md:gap-10 md:justify-between md:w-auto">
