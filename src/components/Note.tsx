@@ -8,6 +8,7 @@ import TimeIcon from "@/icons/TimeIcon";
 import ProtectIcon from "@/icons/ProtectIcon";
 import UnProtectedIcon from "@/icons/UnProtectedIcon";
 import ArchiveIcon from "@/icons/ArchiveIcon";
+import { createClient } from "@/config/supabaseClient";
 
 function Note() {
   const {
@@ -20,13 +21,24 @@ function Note() {
     handleAvailable,
     handleUnavailable,
     handleArchive,
+    addNoteToDBFromLS,
   } = useNoteActions();
   useEffect(() => {
-    const notes = JSON.parse(localStorage.getItem("textNotes") || "[]");
-    if (notes.length > 0) {
-      setTextNotes(notes);
-    }
+    const localBD = async () => {
+      const supabase = createClient();
+      const { data } = await supabase.auth.getUser();
+      if (!data?.user?.id) {
+        const notes = JSON.parse(localStorage.getItem("textNotes") || "[]");
+        if (notes.length > 0) {
+          setTextNotes(notes);
+        }
+        return;
+      }
+      addNoteToDBFromLS();
+    };
+    localBD();
   }, []);
+
   return (
     <>
       <ModalConfirm
@@ -63,7 +75,7 @@ function Note() {
                 setTextNotes((prev) => {
                   const noteChanged = prev.map((txtNote) =>
                     txtNote.id === note.id
-                      ? { ...note, text: e.target.value }
+                      ? { ...note, textNote: e.target.value }
                       : txtNote
                   );
                   localStorage.setItem(
@@ -73,7 +85,7 @@ function Note() {
                   return noteChanged;
                 })
               }
-              value={note.text}
+              value={note.textNote}
               autoFocus
               disabled={note.isDone}
               placeholder="Escribe aquí..."

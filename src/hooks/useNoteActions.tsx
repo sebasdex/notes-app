@@ -8,6 +8,14 @@ interface Note {
   date: string;
   hour: string;
 }
+interface NoteDataArray {
+  id: string[];
+  textNote: string[];
+  noteColor: string[];
+  isDone: boolean[];
+  date: string[];
+  hour: string[];
+}
 
 export const useNoteActions = () => {
   const { textNotes, setTextNotes, setNotesDeleted, setNotesArchived } =
@@ -81,6 +89,41 @@ export const useNoteActions = () => {
       });
     }
   };
+
+  const addNoteToDBFromLS = async () => {
+    try {
+      const notesLS: NoteDataArray = JSON.parse(
+        localStorage.getItem("textNotes") || "[]"
+      );
+      if (!Array.isArray(notesLS) || notesLS.length === 0) {
+        return;
+      }
+      const notesArr: NoteDataArray = notesLS.reduce(
+        (acc: NoteDataArray, note: Note) => {
+          acc.id.push(note.id);
+          acc.noteColor.push(note.noteColor);
+          acc.textNote.push(note.textNote);
+          acc.isDone.push(note.isDone);
+          acc.date.push(note.date);
+          acc.hour.push(note.hour);
+          return acc;
+        },
+        { id: [], noteColor: [], textNote: [], isDone: [], date: [], hour: [] }
+      );
+      const response = await fetch("/api/addNote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(notesArr),
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || "Error desconocido al insertar notas");
+      }
+      localStorage.removeItem("textNotes");
+    } catch (error) {
+      console.error("❌ Error al sincronizar notas:", error);
+    }
+  };
   return {
     handleUnavailable,
     handleAvailable,
@@ -92,5 +135,6 @@ export const useNoteActions = () => {
     textNotes,
     setTextNotes,
     handleArchive,
+    addNoteToDBFromLS,
   };
 };

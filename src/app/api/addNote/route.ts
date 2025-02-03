@@ -1,9 +1,19 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/config/supabaseServer";
 
+interface NoteDataArray {
+  id: string[];
+  textNote: string[];
+  noteColor: string[];
+  isDone: boolean[];
+  date: string[];
+  hour: string[];
+  user_id: string;
+}
+
 export async function POST(req: Request) {
   try {
-    const dataClient = await req.json();
+    const dataClient: NoteDataArray = await req.json();
     const supabase = await createClient();
     const { data, error } = await supabase.auth.getUser();
     if (error || !data?.user?.id) {
@@ -13,20 +23,18 @@ export async function POST(req: Request) {
       );
     }
     const userID = data.user.id;
-    const noteData = {
-      id: dataClient.id,
-      textNote: dataClient.text,
-      noteColor: dataClient.noteColor,
-      isDone: dataClient.isDone,
-      date: dataClient.date,
-      hour: dataClient.hour,
+    const notesArray = dataClient.id.map((_, i) => ({
+      id: dataClient.id[i],
+      textNote: dataClient.textNote[i],
+      noteColor: dataClient.noteColor[i],
+      isDone: dataClient.isDone[i],
+      date: dataClient.date[i],
+      hour: dataClient.hour[i],
       user_id: userID,
-    };
-    const { error: insertNoteError } = await supabase
-      .from("newNotes")
-      .insert([noteData]);
-    if (insertNoteError) {
-      return NextResponse.json({ error: insertNoteError }, { status: 500 });
+    }));
+    await supabase.from("newNotes").insert(notesArray);
+    if (error) {
+      return NextResponse.json({ error }, { status: 500 });
     }
     return NextResponse.json(
       { message: "Datos insertados correctamente" },
