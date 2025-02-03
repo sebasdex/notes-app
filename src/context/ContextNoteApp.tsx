@@ -3,7 +3,7 @@ import { createContext, useState } from "react";
 
 interface Note {
   id: string;
-  text: string;
+  textNote: string;
   noteColor: string;
   isDone: boolean;
   date: string;

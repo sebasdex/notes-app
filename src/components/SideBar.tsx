@@ -22,7 +22,7 @@ function SideBar() {
           ...prev,
           {
             id: uuidv4(),
-            text: "",
+            textNote: "",
             noteColor: color,
             isDone: false,
             date: dateNoteCreate,
@@ -40,7 +40,7 @@ function SideBar() {
           ...prev,
           {
             id: uuidv4(),
-            text: "",
+            textNote: "",
             noteColor: color,
             isDone: false,
             date: dateNoteCreate,
