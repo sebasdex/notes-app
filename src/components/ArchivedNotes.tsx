@@ -6,8 +6,9 @@ import TrashIcon from "@/icons/TrashIcon";
 import { useEffect } from "react";
 import ModalConfirm from "./ModalConfirm";
 import { useNoteArchiveActions } from "@/hooks/useNoteArchiveActions";
+import { User } from "@supabase/supabase-js";
 
-function ArchivedNotes() {
+function ArchivedNotes({ user }: { user: User | null }) {
   const {
     notesArchived,
     setNotesArchived,
@@ -18,10 +19,24 @@ function ArchivedNotes() {
   } = useNoteArchiveActions();
 
   useEffect(() => {
-    const notes = JSON.parse(localStorage.getItem("notesArchived") || "[]");
-    if (notes.length > 0) {
-      setNotesArchived(notes);
-    }
+    const getNotes = async () => {
+      if (!user) {
+        return;
+      }
+      try {
+        const response = await fetch("/api/getArchivedNotes");
+        const result = await response.json();
+        if (!response.ok) {
+          throw new Error(result.error || "Error desconocido en la API");
+        }
+        setNotesArchived(
+          result.archivedNotes.length > 0 ? result.archivedNotes : []
+        );
+      } catch (error) {
+        console.log("❌ Error al cargar notas de archivo:", error);
+      }
+    };
+    getNotes();
   }, []);
 
   return (
@@ -57,7 +72,7 @@ function ArchivedNotes() {
               id={`note-${note.id}`}
               className={`text-white text-lg placeholder-white/80 p-4
              rounded-md w-full h-48 resize-none border-none outline-none ${note.noteColor} disabled:cursor-not-allowed`}
-              value={note.text}
+              value={note.textNote}
               autoFocus
               disabled={true}
             ></textarea>
