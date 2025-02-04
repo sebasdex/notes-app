@@ -14,9 +14,9 @@ export async function POST(req: Request) {
     }
     const addNote = {
       id: dataClient.id,
-      textNote: dataClient.text,
+      textNote: dataClient.textNote,
       noteColor: dataClient.noteColor,
-      isDone: dataClient.isDone,
+      isProtected: dataClient.isProtected,
       isArchived: dataClient.isArchived,
       isDeleted: dataClient.isDeleted,
       date: dataClient.date,
