@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { createClient } from "@/config/supabaseClient";
 import ModalConfirm from "@/components/ModalConfirm";
 import { useNoteActions } from "@/hooks/useNoteActions";
@@ -8,10 +8,11 @@ import TimeIcon from "@/icons/TimeIcon";
 import ProtectIcon from "@/icons/ProtectIcon";
 import UnProtectedIcon from "@/icons/UnProtectedIcon";
 import ArchiveIcon from "@/icons/ArchiveIcon";
+import { User } from "@supabase/supabase-js";
 
 const supabase = createClient();
 
-function Note() {
+function Note({ user }: { user: User | null }) {
   const {
     textNotes,
     setTextNotes,
@@ -26,21 +27,31 @@ function Note() {
   } = useNoteActions();
 
   useEffect(() => {
-    const localBD = async () => {
-      const { data } = await supabase.auth.getUser();
-      if (!data?.user?.id) {
+    const loadNotes = async () => {
+      if (!user?.id) {
+        console.warn(
+          "⚠️ Usuario no autenticado. Mostrando solo notas de localStorage."
+        );
         const notes = JSON.parse(localStorage.getItem("textNotes") || "[]");
-        if (notes.length > 0) {
-          setTextNotes(notes);
-        }
+        setTextNotes(notes);
         return;
       }
-      addNoteToDBFromLS();
+      await addNoteToDBFromLS();
+      try {
+        const response = await fetch("/api/getNotes");
+        const result = await response.json();
+        if (!response.ok) {
+          throw new Error(result.error || "Error desconocido en la API");
+        }
+        setTextNotes(result.notes.length > 0 ? result.notes : []);
+        console.log("✅ Notas sincronizadas y cargadas desde la API.");
+      } catch (error) {
+        console.error("❌ Error al cargar notas desde API:", error);
+      }
     };
-    localBD();
-  }, []);
+    loadNotes();
+  }, [user]);
 
-  // 📌 Función para actualizar la BD con `debounce`
   const updateNoteInDB = async (id: string, newText: string) => {
     setTimeout(async () => {
       try {
@@ -97,8 +108,6 @@ function Note() {
     rounded-md w-full h-48 resize-none border-none outline-none ${note.noteColor} disabled:cursor-not-allowed`}
               onChange={async (e) => {
                 const newText = e.target.value;
-
-                // 📌 1️⃣ Actualiza el estado local rápidamente
                 setTextNotes((prev) =>
                   prev.map((txtNote) =>
                     txtNote.id === note.id
@@ -107,12 +116,7 @@ function Note() {
                   )
                 );
 
-                // 📌 2️⃣ Verificar si el usuario está autenticado
-                const { data } = await supabase.auth.getUser();
-                const userId = data?.user?.id;
-
-                if (!userId) {
-                  // 📌 3️⃣ Si NO está autenticado, guardar solo en `localStorage`
+                if (!user?.id) {
                   const updatedNotes = textNotes.map((txtNote) =>
                     txtNote.id === note.id
                       ? { ...note, textNote: newText }
@@ -128,8 +132,6 @@ function Note() {
                   );
                   return;
                 }
-
-                // 📌 4️⃣ Si SÍ está autenticado, guardar en la BD usando el endpoint con `debounce`
                 updateNoteInDB(note.id, newText);
               }}
               value={note.textNote}
