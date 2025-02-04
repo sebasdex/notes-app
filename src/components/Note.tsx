@@ -20,33 +20,11 @@ function Note({ user }: { user: User | null }) {
     handleAvailable,
     handleUnavailable,
     handleArchive,
-    addNoteToDBFromLS,
+    loadNotes,
   } = useNoteActions();
 
   useEffect(() => {
-    const loadNotes = async () => {
-      if (!user?.id) {
-        console.warn(
-          "⚠️ Usuario no autenticado. Mostrando solo notas de localStorage."
-        );
-        const notes = JSON.parse(localStorage.getItem("textNotes") || "[]");
-        setTextNotes(notes);
-        return;
-      }
-      await addNoteToDBFromLS();
-      try {
-        const response = await fetch("/api/getNotes");
-        const result = await response.json();
-        if (!response.ok) {
-          throw new Error(result.error || "Error desconocido en la API");
-        }
-        setTextNotes(result.notes.length > 0 ? result.notes : []);
-        console.log("✅ Notas sincronizadas y cargadas desde la API.");
-      } catch (error) {
-        console.error("❌ Error al cargar notas desde API:", error);
-      }
-    };
-    loadNotes();
+    loadNotes(user as User);
   }, [user]);
 
   const updateNoteInDB = async (id: string, newText: string) => {
@@ -156,7 +134,7 @@ function Note({ user }: { user: User | null }) {
               {/* Archive Button */}
               <button
                 onMouseDown={(e) => e.preventDefault()}
-                onClick={() => handleArchive(note)}
+                onClick={() => handleArchive(note, user as User)}
                 aria-label="archive note"
                 className={`w-10 h-10 flex items-center justify-center rounded-full bg-${note.noteColor}-700/80 hover:bg-${note.noteColor}-600  transition-transform transform hover:scale-110`}
               >
