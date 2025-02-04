@@ -14,10 +14,11 @@ export async function GET(req: Request) {
     const { data: notes, error: notesError } = await supabase
       .from("newNotes")
       .select("*")
-      .eq("user_id", userId);
+      .eq("user_id", userId)
+      .eq("isDeleted", false)
+      .eq("isArchived", false);
 
     if (notesError) throw notesError;
-
     return NextResponse.json({ notes }, { status: 200 });
   } catch (error) {
     console.error("❌ Error en API /getNotes:", error);
