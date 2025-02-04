@@ -55,7 +55,7 @@ function TrashNotes() {
               id={`note-${note.id}`}
               className={`text-white text-lg placeholder-white/80 p-4
              rounded-md w-full h-48 resize-none border-none outline-none ${note.noteColor} disabled:cursor-not-allowed`}
-              value={note.text}
+              value={note.textNote}
               autoFocus
               disabled={true}
             ></textarea>

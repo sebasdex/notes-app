@@ -5,7 +5,9 @@ interface NoteDataArray {
   id: string[];
   textNote: string[];
   noteColor: string[];
-  isDone: boolean[];
+  isProtected: boolean[];
+  isArchived: boolean[];
+  isDeleted: boolean[];
   date: string[];
   hour: string[];
   user_id: string;
@@ -27,7 +29,9 @@ export async function POST(req: Request) {
       id: dataClient.id[i],
       textNote: dataClient.textNote[i],
       noteColor: dataClient.noteColor[i],
-      isDone: dataClient.isDone[i],
+      isProtected: dataClient.isProtected[i],
+      isArchived: dataClient.isArchived[i],
+      isDeleted: dataClient.isDeleted[i],
       date: dataClient.date[i],
       hour: dataClient.hour[i],
       user_id: userID,

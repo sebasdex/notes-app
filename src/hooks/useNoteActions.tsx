@@ -5,7 +5,9 @@ interface Note {
   id: string;
   textNote: string;
   noteColor: string;
-  isDone: boolean;
+  isProtected: boolean;
+  isArchived: boolean;
+  isDeleted: boolean;
   date: string;
   hour: string;
 }
@@ -13,7 +15,9 @@ interface NoteDataArray {
   id: string[];
   textNote: string[];
   noteColor: string[];
-  isDone: boolean[];
+  isProtected: boolean[];
+  isArchived: boolean[];
+  isDeleted: boolean[];
   date: string[];
   hour: string[];
 }
@@ -27,18 +31,15 @@ export const useNoteActions = () => {
   const supabase = createClient();
 
   const handleAvailable = async (note: Note) => {
-    // 📌 Verificar si el usuario está autenticado
     const { data } = await supabase.auth.getUser();
     const userId = data?.user?.id;
-
-    // 📌 Si el usuario NO está autenticado, guardar solo en `localStorage`
     if (!userId) {
       console.warn(
         "⚠️ Usuario no autenticado. La nota solo se guardará en localStorage."
       );
 
       const updatedNotes = textNotes.map((txtNote) =>
-        txtNote.id === note.id ? { ...note, isDone: true } : txtNote
+        txtNote.id === note.id ? { ...note, isProtected: true } : txtNote
       );
 
       setTextNotes(updatedNotes);
@@ -46,8 +47,6 @@ export const useNoteActions = () => {
       setIsConfirm(true);
       return;
     }
-
-    // 📌 Si el usuario SÍ está autenticado, actualizar solo en la BD
     try {
       const response = await fetch("/api/updateNote", {
         method: "POST",
@@ -61,7 +60,6 @@ export const useNoteActions = () => {
         throw new Error(result.error || "Error al actualizar la nota");
       }
 
-      // 📌 Actualizar el estado solo después de que la BD confirme el cambio
       const updatedNotes = textNotes.map((txtNote) =>
         txtNote.id === note.id ? { ...note, isDone: true } : txtNote
       );
@@ -75,11 +73,9 @@ export const useNoteActions = () => {
   };
 
   const handleUnavailable = async (note: Note) => {
-    // 📌 Verificar si el usuario está autenticado
     const { data } = await supabase.auth.getUser();
     const userId = data?.user?.id;
 
-    // 📌 Si el usuario NO está autenticado, guardar solo en `localStorage`
     if (!userId) {
       console.warn(
         "⚠️ Usuario no autenticado. La nota solo se guardará en localStorage."
@@ -95,12 +91,11 @@ export const useNoteActions = () => {
       return;
     }
 
-    // 📌 Si el usuario SÍ está autenticado, actualizar solo en la BD
     try {
       const response = await fetch("/api/updateNote", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: note.id, isDone: false }),
+        body: JSON.stringify({ id: note.id, isProtected: false }),
       });
 
       const result = await response.json();
@@ -109,7 +104,6 @@ export const useNoteActions = () => {
         throw new Error(result.error || "Error al actualizar la nota");
       }
 
-      // 📌 Actualizar el estado solo después de que la BD confirme el cambio
       const updatedNotes = textNotes.map((txtNote) =>
         txtNote.id === note.id ? { ...note, isDone: false } : txtNote
       );
@@ -180,12 +174,23 @@ export const useNoteActions = () => {
           acc.id.push(note.id);
           acc.noteColor.push(note.noteColor);
           acc.textNote.push(note.textNote);
-          acc.isDone.push(note.isDone);
+          acc.isProtected.push(note.isProtected);
+          acc.isArchived.push(note.isArchived);
+          acc.isDeleted.push(note.isDeleted);
           acc.date.push(note.date);
           acc.hour.push(note.hour);
           return acc;
         },
-        { id: [], noteColor: [], textNote: [], isDone: [], date: [], hour: [] }
+        {
+          id: [],
+          noteColor: [],
+          textNote: [],
+          isProtected: [],
+          isArchived: [],
+          isDeleted: [],
+          date: [],
+          hour: [],
+        }
       );
       const response = await fetch("/api/addNote", {
         method: "POST",

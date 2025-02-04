@@ -5,7 +5,9 @@ interface Note {
   id: string;
   textNote: string;
   noteColor: string;
-  isDone: boolean;
+  isProtected: boolean;
+  isArchived: boolean;
+  isDeleted: boolean;
   date: string;
   hour: string;
 }

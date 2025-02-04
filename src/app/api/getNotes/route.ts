@@ -11,8 +11,6 @@ export async function GET(req: Request) {
     }
 
     const userId = data.user.id;
-
-    // 📌 Obtener notas desde la BD
     const { data: notes, error: notesError } = await supabase
       .from("newNotes")
       .select("*")

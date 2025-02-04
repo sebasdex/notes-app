@@ -13,7 +13,7 @@ function SideBar() {
   const pathname = usePathname();
   const router = useRouter();
   const colorButtons = ["bg-yellow-500", "bg-blue-500", "bg-red-500"];
-  const { setTextNotes, textNotes } = useNoteAppContext();
+  const { setTextNotes } = useNoteAppContext();
   const supabase = createClient();
   const dateNoteCreate = new Date().toLocaleDateString("es-ES");
   const hourDateCreate = new Date().toLocaleTimeString("es-ES");
@@ -27,7 +27,9 @@ function SideBar() {
       id: uuidv4(),
       textNote: "",
       noteColor: color,
-      isDone: false,
+      isProtected: false,
+      isArchived: false,
+      isDeleted: false,
       date: dateNoteCreate,
       hour: hourDateCreate,
     };

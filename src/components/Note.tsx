@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { createClient } from "@/config/supabaseClient";
 import ModalConfirm from "@/components/ModalConfirm";
 import { useNoteActions } from "@/hooks/useNoteActions";
 import TrashIcon from "@/icons/TrashIcon";
@@ -9,8 +8,6 @@ import ProtectIcon from "@/icons/ProtectIcon";
 import UnProtectedIcon from "@/icons/UnProtectedIcon";
 import ArchiveIcon from "@/icons/ArchiveIcon";
 import { User } from "@supabase/supabase-js";
-
-const supabase = createClient();
 
 function Note({ user }: { user: User | null }) {
   const {
@@ -136,7 +133,7 @@ function Note({ user }: { user: User | null }) {
               }}
               value={note.textNote}
               autoFocus
-              disabled={note.isDone}
+              disabled={note.isProtected}
               placeholder="Escribe aquí..."
             ></textarea>
 
@@ -166,7 +163,7 @@ function Note({ user }: { user: User | null }) {
                 <ArchiveIcon stroke="white" />
               </button>
               {/* Unprotected Button */}
-              {note.isDone ? (
+              {note.isProtected ? (
                 <button
                   onClick={() => handleUnavailable(note)}
                   onMouseDown={(e) => e.preventDefault()}

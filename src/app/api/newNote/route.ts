@@ -17,6 +17,8 @@ export async function POST(req: Request) {
       textNote: dataClient.text,
       noteColor: dataClient.noteColor,
       isDone: dataClient.isDone,
+      isArchived: dataClient.isArchived,
+      isDeleted: dataClient.isDeleted,
       date: dataClient.date,
       hour: dataClient.hour,
       user_id: data.user.id,
