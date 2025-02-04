@@ -1,5 +1,6 @@
 import { useNoteAppContext } from "@/context/useContextNoteApp";
 import { useState } from "react";
+import { createClient } from "@/config/supabaseClient";
 interface Note {
   id: string;
   textNote: string;
@@ -23,26 +24,102 @@ export const useNoteActions = () => {
   const [isAlertDelete, setIsAlertDelete] = useState<boolean>(false);
   const [_, setIsConfirm] = useState<boolean>(false);
   const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
-  const handleAvailable = (note: Note) => {
-    setTextNotes((prevState) => {
-      const noteProtected = prevState.map((txtNote) =>
-        txtNote.id === note.id ? { ...note, isDone: !note.isDone } : txtNote
+  const supabase = createClient();
+
+  const handleAvailable = async (note: Note) => {
+    // 📌 Verificar si el usuario está autenticado
+    const { data } = await supabase.auth.getUser();
+    const userId = data?.user?.id;
+
+    // 📌 Si el usuario NO está autenticado, guardar solo en `localStorage`
+    if (!userId) {
+      console.warn(
+        "⚠️ Usuario no autenticado. La nota solo se guardará en localStorage."
       );
-      localStorage.setItem("textNotes", JSON.stringify(noteProtected));
-      return noteProtected;
-    });
-    setIsConfirm(true);
+
+      const updatedNotes = textNotes.map((txtNote) =>
+        txtNote.id === note.id ? { ...note, isDone: true } : txtNote
+      );
+
+      setTextNotes(updatedNotes);
+      localStorage.setItem("textNotes", JSON.stringify(updatedNotes));
+      setIsConfirm(true);
+      return;
+    }
+
+    // 📌 Si el usuario SÍ está autenticado, actualizar solo en la BD
+    try {
+      const response = await fetch("/api/updateNote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: note.id, isDone: true }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Error al actualizar la nota");
+      }
+
+      // 📌 Actualizar el estado solo después de que la BD confirme el cambio
+      const updatedNotes = textNotes.map((txtNote) =>
+        txtNote.id === note.id ? { ...note, isDone: true } : txtNote
+      );
+
+      setTextNotes(updatedNotes);
+      setIsConfirm(true);
+      console.log("✅ Nota protegida correctamente en la BD.");
+    } catch (error) {
+      console.error("❌ Error al actualizar la nota en la BD:", error);
+    }
   };
 
-  const handleUnavailable = (note: Note) => {
-    setTextNotes((prevState) => {
-      const noteUnProtected = prevState.map((txtNote) =>
-        txtNote.id === note.id ? { ...note, isDone: !note.isDone } : txtNote
+  const handleUnavailable = async (note: Note) => {
+    // 📌 Verificar si el usuario está autenticado
+    const { data } = await supabase.auth.getUser();
+    const userId = data?.user?.id;
+
+    // 📌 Si el usuario NO está autenticado, guardar solo en `localStorage`
+    if (!userId) {
+      console.warn(
+        "⚠️ Usuario no autenticado. La nota solo se guardará en localStorage."
       );
-      localStorage.setItem("textNotes", JSON.stringify(noteUnProtected));
-      return noteUnProtected;
-    });
-    setIsConfirm(false);
+
+      const updatedNotes = textNotes.map((txtNote) =>
+        txtNote.id === note.id ? { ...note, isDone: false } : txtNote
+      );
+
+      setTextNotes(updatedNotes);
+      localStorage.setItem("textNotes", JSON.stringify(updatedNotes));
+      setIsConfirm(false);
+      return;
+    }
+
+    // 📌 Si el usuario SÍ está autenticado, actualizar solo en la BD
+    try {
+      const response = await fetch("/api/updateNote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: note.id, isDone: false }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Error al actualizar la nota");
+      }
+
+      // 📌 Actualizar el estado solo después de que la BD confirme el cambio
+      const updatedNotes = textNotes.map((txtNote) =>
+        txtNote.id === note.id ? { ...note, isDone: false } : txtNote
+      );
+
+      setTextNotes(updatedNotes);
+      setIsConfirm(false);
+      console.log("✅ Nota desprotegida correctamente en la BD.");
+    } catch (error) {
+      console.error("❌ Error al actualizar la nota en la BD:", error);
+    }
   };
 
   const handleDeleteConfirm = () => {

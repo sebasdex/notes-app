@@ -1,5 +1,5 @@
-"use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { createClient } from "@/config/supabaseClient";
 import ModalConfirm from "@/components/ModalConfirm";
 import { useNoteActions } from "@/hooks/useNoteActions";
 import TrashIcon from "@/icons/TrashIcon";
@@ -8,7 +8,8 @@ import TimeIcon from "@/icons/TimeIcon";
 import ProtectIcon from "@/icons/ProtectIcon";
 import UnProtectedIcon from "@/icons/UnProtectedIcon";
 import ArchiveIcon from "@/icons/ArchiveIcon";
-import { createClient } from "@/config/supabaseClient";
+
+const supabase = createClient();
 
 function Note() {
   const {
@@ -23,9 +24,9 @@ function Note() {
     handleArchive,
     addNoteToDBFromLS,
   } = useNoteActions();
+
   useEffect(() => {
     const localBD = async () => {
-      const supabase = createClient();
       const { data } = await supabase.auth.getUser();
       if (!data?.user?.id) {
         const notes = JSON.parse(localStorage.getItem("textNotes") || "[]");
@@ -38,6 +39,29 @@ function Note() {
     };
     localBD();
   }, []);
+
+  // 📌 Función para actualizar la BD con `debounce`
+  const updateNoteInDB = async (id: string, newText: string) => {
+    setTimeout(async () => {
+      try {
+        const response = await fetch("/api/updateNote", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id, textNote: newText }),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || "Error desconocido en la API");
+        }
+
+        console.log("✅ Nota guardada correctamente en la BD:", result);
+      } catch (error) {
+        console.error("❌ Error al actualizar nota en la BD:", error);
+      }
+    }, 2000);
+  };
 
   return (
     <>
@@ -70,26 +94,50 @@ function Note() {
               name="note"
               id={`note-${note.id}`}
               className={`text-white text-lg placeholder-white/80 p-4
-                 rounded-md w-full h-48 resize-none border-none outline-none ${note.noteColor} disabled:cursor-not-allowed`}
-              onChange={(e) =>
-                setTextNotes((prev) => {
-                  const noteChanged = prev.map((txtNote) =>
+    rounded-md w-full h-48 resize-none border-none outline-none ${note.noteColor} disabled:cursor-not-allowed`}
+              onChange={async (e) => {
+                const newText = e.target.value;
+
+                // 📌 1️⃣ Actualiza el estado local rápidamente
+                setTextNotes((prev) =>
+                  prev.map((txtNote) =>
                     txtNote.id === note.id
-                      ? { ...note, textNote: e.target.value }
+                      ? { ...note, textNote: newText }
+                      : txtNote
+                  )
+                );
+
+                // 📌 2️⃣ Verificar si el usuario está autenticado
+                const { data } = await supabase.auth.getUser();
+                const userId = data?.user?.id;
+
+                if (!userId) {
+                  // 📌 3️⃣ Si NO está autenticado, guardar solo en `localStorage`
+                  const updatedNotes = textNotes.map((txtNote) =>
+                    txtNote.id === note.id
+                      ? { ...note, textNote: newText }
                       : txtNote
                   );
+
                   localStorage.setItem(
                     "textNotes",
-                    JSON.stringify(noteChanged)
+                    JSON.stringify(updatedNotes)
                   );
-                  return noteChanged;
-                })
-              }
+                  console.warn(
+                    "⚠️ Usuario no autenticado. La nota solo se guardará en localStorage."
+                  );
+                  return;
+                }
+
+                // 📌 4️⃣ Si SÍ está autenticado, guardar en la BD usando el endpoint con `debounce`
+                updateNoteInDB(note.id, newText);
+              }}
               value={note.textNote}
               autoFocus
               disabled={note.isDone}
               placeholder="Escribe aquí..."
             ></textarea>
+
             {/* Footer */}
             <div className="flex justify-between mt-4 px-2 py-2 rounded-lg bg-white/20 backdrop-blur-md">
               {/* Delete Button */}
