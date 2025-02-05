@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { use, useEffect } from "react";
 import ModalConfirm from "@/components/ModalConfirm";
 import { useNoteActions } from "@/hooks/useNoteActions";
 import TrashIcon from "@/icons/TrashIcon";
@@ -121,13 +121,20 @@ function Note({ user }: { user: User | null }) {
               <button
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => handleDelete(note.id)}
+                disabled={user?.id ? false : true}
                 aria-label="delete note"
-                className={`w-10 h-10 flex items-center justify-center rounded-full bg-${note.noteColor}-700/80 hover:bg-${note.noteColor}-600  transition-transform transform hover:scale-110`}
+                className={`w-10 h-10 flex items-center justify-center rounded-full bg-${
+                  note.noteColor
+                }-700/80 hover:bg-${
+                  note.noteColor
+                }-600  transition-transform transform hover:scale-110 ${
+                  user?.id ? "" : "cursor-not-allowed hover:scale-100"
+                }`}
               >
                 <TrashIcon
                   width={24}
                   height={24}
-                  stroke="white"
+                  stroke={user?.id ? "white" : "rgba(255, 255, 255, 0.264)"}
                   strokeWidth={2}
                 />
               </button>
@@ -135,10 +142,19 @@ function Note({ user }: { user: User | null }) {
               <button
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => handleArchive(note, user as User)}
+                disabled={user?.id ? false : true}
                 aria-label="archive note"
-                className={`w-10 h-10 flex items-center justify-center rounded-full bg-${note.noteColor}-700/80 hover:bg-${note.noteColor}-600  transition-transform transform hover:scale-110`}
+                className={`w-10 h-10 flex items-center justify-center rounded-full bg-${
+                  note.noteColor
+                }-700/80 hover:bg-${
+                  note.noteColor
+                }-600  transition-transform transform hover:scale-110 ${
+                  user?.id ? "" : "cursor-not-allowed hover:scale-100"
+                }`}
               >
-                <ArchiveIcon stroke="white" />
+                <ArchiveIcon
+                  stroke={user?.id ? "white" : "rgba(255, 255, 255, 0.264)"}
+                />
               </button>
               {/* Unprotected Button */}
               {note.isProtected ? (
