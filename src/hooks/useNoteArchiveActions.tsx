@@ -6,22 +6,30 @@ export const useNoteArchiveActions = () => {
     useNoteAppContext();
   const [isAlertDelete, setIsAlertDelete] = useState<boolean>(false);
   const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
-  const handleDeleteConfirm = () => {
+
+  const handleDeleteConfirm = async () => {
     if (noteToDelete) {
       const note = notesArchived.find((note) => note.id === noteToDelete);
       if (note) {
-        setNotesDeleted((prevState) => {
-          const trashNotes = [...prevState, note];
-          localStorage.setItem("notesDeleted", JSON.stringify(trashNotes));
-          return trashNotes;
-        });
-        setNotesArchived((prevState) => {
-          const deleteNote = prevState.filter(
-            (txtNote) => txtNote.id !== noteToDelete
-          );
-          localStorage.setItem("notesArchived", JSON.stringify(deleteNote));
-          return deleteNote;
-        });
+        try {
+          const response = await fetch("/api/updateNote", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              id: note.id,
+              isDeleted: true,
+              isArchived: false,
+            }),
+          });
+          const result = await response.json();
+          if (!response.ok) {
+            throw new Error(result.error || "Error al actualizar la nota");
+          }
+          console.log("✅ Nota eliminada correctamente de la BD.");
+          await getNotes();
+        } catch (error) {
+          console.log("❌ Error al eliminar nota de archivo:", error);
+        }
       }
       setNoteToDelete(null);
     }
@@ -31,6 +39,21 @@ export const useNoteArchiveActions = () => {
   const handleDelete = (id: string) => {
     setNoteToDelete(id);
     setIsAlertDelete(true);
+  };
+
+  const getNotes = async () => {
+    try {
+      const response = await fetch("/api/getArchivedNotes");
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || "Error desconocido en la API");
+      }
+      setNotesArchived(
+        result.archivedNotes.length > 0 ? result.archivedNotes : []
+      );
+    } catch (error) {
+      console.log("❌ Error al cargar notas de archivo:", error);
+    }
   };
   return {
     noteToDelete,
@@ -42,5 +65,6 @@ export const useNoteArchiveActions = () => {
     setIsAlertDelete,
     handleDelete,
     handleDeleteConfirm,
+    getNotes,
   };
 };

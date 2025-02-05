@@ -6,16 +6,19 @@ interface Note {
   textNote: string;
   isProtected: boolean;
   isArchived: boolean;
+  isDeleted: boolean;
 }
 
 export async function POST(req: Request) {
   try {
-    const { id, textNote, isProtected, isArchived } = await req.json();
+    const { id, textNote, isProtected, isArchived, isDeleted } =
+      await req.json();
     if (
       !id ||
       (textNote === undefined &&
         isProtected === undefined &&
-        isArchived === undefined)
+        isArchived === undefined &&
+        isDeleted === undefined)
     ) {
       return NextResponse.json(
         { error: "Faltan datos: id y al menos un campo a actualizar" },
@@ -29,6 +32,7 @@ export async function POST(req: Request) {
     if (textNote !== undefined) updateData.textNote = textNote;
     if (isProtected !== undefined) updateData.isProtected = isProtected;
     if (isArchived !== undefined) updateData.isArchived = isArchived;
+    if (isDeleted !== undefined) updateData.isDeleted = isDeleted;
 
     const { data, error } = await supabase
       .from("newNotes")

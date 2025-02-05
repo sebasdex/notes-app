@@ -11,7 +11,7 @@ import { User } from "@supabase/supabase-js";
 function ArchivedNotes({ user }: { user: User | null }) {
   const {
     notesArchived,
-    setNotesArchived,
+    getNotes,
     isAlertDelete,
     setIsAlertDelete,
     handleDelete,
@@ -19,24 +19,9 @@ function ArchivedNotes({ user }: { user: User | null }) {
   } = useNoteArchiveActions();
 
   useEffect(() => {
-    const getNotes = async () => {
-      if (!user) {
-        return;
-      }
-      try {
-        const response = await fetch("/api/getArchivedNotes");
-        const result = await response.json();
-        if (!response.ok) {
-          throw new Error(result.error || "Error desconocido en la API");
-        }
-        setNotesArchived(
-          result.archivedNotes.length > 0 ? result.archivedNotes : []
-        );
-      } catch (error) {
-        console.log("❌ Error al cargar notas de archivo:", error);
-      }
-    };
-    getNotes();
+    if (user) {
+      getNotes();
+    }
   }, []);
 
   return (
