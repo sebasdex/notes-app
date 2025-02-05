@@ -45,7 +45,7 @@ export const useTrashNoteActions = () => {
           setNotesDeleted((prev) =>
             prev.filter((txtNote) => txtNote.id !== note.id)
           );
-          console.log("✅ Nota eliminada correctamente de la BD.");
+          //TODO: agregar mensaje de exito
           await getTrashNotes(user);
         } catch (error) {
           console.log("❌ Error al eliminar nota de la BD:", error);
@@ -67,7 +67,7 @@ export const useTrashNoteActions = () => {
       if (!response.ok) {
         throw new Error(result.error || "Error al actualizar la nota");
       }
-      console.log("✅ Nota devuelta correctamente en la BD.");
+      //TODO: agregar mensaje de exito
       await getTrashNotes(user);
     } catch (error) {
       console.log("❌ Error al devolver nota de la papelera:", error);
@@ -85,7 +85,7 @@ export const useTrashNoteActions = () => {
       if (!response.ok) {
         throw new Error(result.error || "Error al actualizar la nota");
       }
-      console.log("✅ Nota archivada correctamente en la BD.");
+      //TODO: agregar mensaje de exito
       await getTrashNotes(user);
     } catch (error) {
       console.log("❌ Error al archivar nota de la papelera:", error);

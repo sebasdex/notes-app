@@ -24,13 +24,7 @@ interface NoteDataArray {
 }
 
 export const useNoteActions = () => {
-  const {
-    textNotes,
-    setTextNotes,
-    setNotesDeleted,
-    setNotesArchived,
-    notesDeleted,
-  } = useNoteAppContext();
+  const { textNotes, setTextNotes } = useNoteAppContext();
   const [isAlertDelete, setIsAlertDelete] = useState<boolean>(false);
   const [_, setIsConfirm] = useState<boolean>(false);
   const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
@@ -38,9 +32,6 @@ export const useNoteActions = () => {
 
   const loadNotes = async (user: User) => {
     if (!user?.id) {
-      console.warn(
-        "⚠️ Usuario no autenticado. Mostrando solo notas de localStorage."
-      );
       const notes = JSON.parse(localStorage.getItem("textNotes") || "[]");
       setTextNotes(notes);
       return;
@@ -53,7 +44,7 @@ export const useNoteActions = () => {
         throw new Error(result.error || "Error desconocido en la API");
       }
       setTextNotes(result.notes.length > 0 ? result.notes : []);
-      console.log("✅ Notas sincronizadas y cargadas desde la API.");
+      //TODO: agregar mensaje de exito
     } catch (error) {
       console.error("❌ Error al cargar notas desde API:", error);
     }
@@ -63,14 +54,9 @@ export const useNoteActions = () => {
     const { data } = await supabase.auth.getUser();
     const userId = data?.user?.id;
     if (!userId) {
-      console.warn(
-        "⚠️ Usuario no autenticado. La nota solo se guardará en localStorage."
-      );
-
       const updatedNotes = textNotes.map((txtNote) =>
         txtNote.id === note.id ? { ...note, isProtected: true } : txtNote
       );
-
       setTextNotes(updatedNotes);
       localStorage.setItem("textNotes", JSON.stringify(updatedNotes));
       setIsConfirm(true);
@@ -95,7 +81,6 @@ export const useNoteActions = () => {
 
       setTextNotes(updatedNotes);
       setIsConfirm(true);
-      console.log("✅ Nota protegida correctamente en la BD.");
     } catch (error) {
       console.error("❌ Error al actualizar la nota en la BD:", error);
     }
@@ -104,16 +89,10 @@ export const useNoteActions = () => {
   const handleUnavailable = async (note: Note) => {
     const { data } = await supabase.auth.getUser();
     const userId = data?.user?.id;
-
     if (!userId) {
-      console.warn(
-        "⚠️ Usuario no autenticado. La nota solo se guardará en localStorage."
-      );
-
       const updatedNotes = textNotes.map((txtNote) =>
         txtNote.id === note.id ? { ...note, isProtected: false } : txtNote
       );
-
       setTextNotes(updatedNotes);
       localStorage.setItem("textNotes", JSON.stringify(updatedNotes));
       setIsConfirm(false);
@@ -139,7 +118,6 @@ export const useNoteActions = () => {
 
       setTextNotes(updatedNotes);
       setIsConfirm(false);
-      console.log("✅ Nota desprotegida correctamente en la BD.");
     } catch (error) {
       console.error("❌ Error al actualizar la nota en la BD:", error);
     }
@@ -151,12 +129,7 @@ export const useNoteActions = () => {
       if (note) {
         const { data } = await supabase.auth.getUser();
         const userId = data?.user?.id;
-        // 📌 Si el usuario NO está autenticado, guardar solo en `localStorage`
         if (!userId) {
-          console.warn(
-            "⚠️ Usuario no autenticado. La nota solo se guardará en localStorage."
-          );
-
           setTextNotes((prev) => {
             const updatedNotes = prev.map((txtNote) =>
               txtNote.id === note.id ? { ...txtNote, isDeleted: true } : txtNote
@@ -167,8 +140,6 @@ export const useNoteActions = () => {
           return;
         }
         try {
-          console.log("Siiiiiiii");
-          // 📌 Actualizar la nota en la BD
           const response = await fetch("/api/updateNote", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -187,7 +158,7 @@ export const useNoteActions = () => {
             throw new Error(result.error || "Error al actualizar la nota");
           }
           await loadNotes(user);
-          console.log("✅ Nota archivada correctamente en la BD.");
+          //TODO: agregar mensaje de exito
         } catch (error) {
           console.error("❌ Error al actualizar la nota en la BD:", error);
         }
@@ -206,12 +177,7 @@ export const useNoteActions = () => {
     const { data } = await supabase.auth.getUser();
     const userId = data?.user?.id;
 
-    // 📌 Si el usuario NO está autenticado, guardar solo en `localStorage`
     if (!userId) {
-      console.warn(
-        "⚠️ Usuario no autenticado. La nota solo se guardará en localStorage."
-      );
-
       setTextNotes((prev) => {
         const updatedNotes = prev.map((txtNote) =>
           txtNote.id === note.id ? { ...txtNote, isArchived: true } : txtNote
@@ -222,7 +188,6 @@ export const useNoteActions = () => {
       return;
     }
     try {
-      // 📌 Actualizar la nota en la BD
       const response = await fetch("/api/updateNote", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -241,7 +206,7 @@ export const useNoteActions = () => {
         throw new Error(result.error || "Error al actualizar la nota");
       }
       await loadNotes(user);
-      console.log("✅ Nota archivada correctamente en la BD.");
+      //TODO: agregar mensaje de exito
     } catch (error) {
       console.error("❌ Error al actualizar la nota en la BD:", error);
     }

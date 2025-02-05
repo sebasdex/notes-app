@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     if (isArchived !== undefined) updateData.isArchived = isArchived;
     if (isDeleted !== undefined) updateData.isDeleted = isDeleted;
 
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("newNotes")
       .update(updateData)
       .eq("id", id);

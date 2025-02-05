@@ -18,7 +18,6 @@ function SideBar() {
   const dateNoteCreate = new Date().toLocaleDateString("es-ES");
   const hourDateCreate = new Date().toLocaleTimeString("es-ES");
 
-  /* AddNote Function */
   const addNote = async (color: string) => {
     if (pathname === "/trash" || pathname === "/archive") {
       router.push("/");

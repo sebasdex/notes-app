@@ -25,7 +25,7 @@ export const useNoteArchiveActions = () => {
           if (!response.ok) {
             throw new Error(result.error || "Error al actualizar la nota");
           }
-          console.log("✅ Nota eliminada correctamente de la BD.");
+          //TODO: agregar mensaje de exito
           await getNotes();
         } catch (error) {
           console.log("❌ Error al eliminar nota de archivo:", error);
@@ -67,7 +67,7 @@ export const useNoteArchiveActions = () => {
       if (!response.ok) {
         throw new Error(result.error || "Error al actualizar la nota");
       }
-      console.log("✅ Nota devuelta correctamente en la BD.");
+      //TODO: agregar mensaje de exito
       await getNotes();
     } catch (error) {
       console.log("❌ Error al devolver nota de archivo:", error);

@@ -25,7 +25,6 @@ export async function POST(req: NextRequest) {
     if (deleteError) {
       throw deleteError;
     }
-
     return NextResponse.json(
       { message: "✅ Nota eliminada correctamente" },
       { status: 200 }

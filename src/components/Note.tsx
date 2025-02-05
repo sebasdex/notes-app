@@ -102,9 +102,6 @@ function Note({ user }: { user: User | null }) {
                     "textNotes",
                     JSON.stringify(updatedNotes)
                   );
-                  console.warn(
-                    "⚠️ Usuario no autenticado. La nota solo se guardará en localStorage."
-                  );
                   return;
                 }
                 updateNoteInDB(note.id, newText);
