@@ -7,7 +7,9 @@ import TimeIcon from "@/icons/TimeIcon";
 import TrashIcon from "@/icons/TrashIcon";
 import ReturnIcon from "@/icons/ReturnIcon";
 import ArchiveIcon from "@/icons/ArchiveIcon";
-function TrashNotes() {
+import { User } from "@supabase/supabase-js";
+
+function TrashNotes({ user }: { user: User | null }) {
   const {
     setIsAlertDelete,
     setNotesDeleted,
@@ -17,10 +19,22 @@ function TrashNotes() {
     handleDelete,
   } = useTrashNoteActions();
   useEffect(() => {
-    const notes = JSON.parse(localStorage.getItem("notesDeleted") || "[]");
-    if (notes.length > 0) {
-      setNotesDeleted(notes);
-    }
+    const getTrashNotes = async () => {
+      if (!user?.id) {
+        return;
+      }
+      try {
+        const response = await fetch("/api/getTrashNotes");
+        const result = await response.json();
+        if (!response.ok) {
+          throw new Error(result.error || "Error desconocido en la API");
+        }
+        setNotesDeleted(result.trashNotes.length > 0 ? result.trashNotes : []);
+      } catch (error) {
+        console.log("❌ Error al cargar notas de la papelera:", error);
+      }
+    };
+    getTrashNotes();
   }, []);
 
   return (
