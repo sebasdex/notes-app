@@ -24,8 +24,13 @@ interface NoteDataArray {
 }
 
 export const useNoteActions = () => {
-  const { textNotes, setTextNotes, setNotesDeleted, setNotesArchived } =
-    useNoteAppContext();
+  const {
+    textNotes,
+    setTextNotes,
+    setNotesDeleted,
+    setNotesArchived,
+    notesDeleted,
+  } = useNoteAppContext();
   const [isAlertDelete, setIsAlertDelete] = useState<boolean>(false);
   const [_, setIsConfirm] = useState<boolean>(false);
   const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
@@ -140,22 +145,52 @@ export const useNoteActions = () => {
     }
   };
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async (user: User) => {
     if (noteToDelete) {
       const note = textNotes.find((note) => note.id === noteToDelete);
       if (note) {
-        setNotesDeleted((prevState) => {
-          const trashNotes = [...prevState, note];
-          localStorage.setItem("notesDeleted", JSON.stringify(trashNotes));
-          return trashNotes;
-        });
-        setTextNotes((prevState) => {
-          const deleteNote = prevState.filter(
-            (txtNote) => txtNote.id !== noteToDelete
+        const { data } = await supabase.auth.getUser();
+        const userId = data?.user?.id;
+        // 📌 Si el usuario NO está autenticado, guardar solo en `localStorage`
+        if (!userId) {
+          console.warn(
+            "⚠️ Usuario no autenticado. La nota solo se guardará en localStorage."
           );
-          localStorage.setItem("textNotes", JSON.stringify(deleteNote));
-          return deleteNote;
-        });
+
+          setTextNotes((prev) => {
+            const updatedNotes = prev.map((txtNote) =>
+              txtNote.id === note.id ? { ...txtNote, isDeleted: true } : txtNote
+            );
+            localStorage.setItem("textNotes", JSON.stringify(updatedNotes));
+            return updatedNotes;
+          });
+          return;
+        }
+        try {
+          console.log("Siiiiiiii");
+          // 📌 Actualizar la nota en la BD
+          const response = await fetch("/api/updateNote", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: note.id, isDeleted: true }),
+          });
+
+          const result = await response.json();
+          setTextNotes((prev) =>
+            prev.map((txtNote) =>
+              txtNote.id === note.id
+                ? { ...txtNote, isDeleted: result.data }
+                : txtNote
+            )
+          );
+          if (!response.ok) {
+            throw new Error(result.error || "Error al actualizar la nota");
+          }
+          await loadNotes(user);
+          console.log("✅ Nota archivada correctamente en la BD.");
+        } catch (error) {
+          console.error("❌ Error al actualizar la nota en la BD:", error);
+        }
       }
       setNoteToDelete(null);
     }

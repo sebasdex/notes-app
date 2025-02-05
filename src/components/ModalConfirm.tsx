@@ -1,3 +1,5 @@
+import { User } from "@supabase/supabase-js";
+
 function ModalConfirm({
   isAlertDelete,
   setIsAlertDelete,
@@ -6,11 +8,11 @@ function ModalConfirm({
 }: {
   isAlertDelete: boolean;
   setIsAlertDelete: React.Dispatch<React.SetStateAction<boolean>>;
-  onConfirm: () => void;
+  onConfirm: (user: User) => void;
   message: string;
 }) {
-  const handleConfirm = () => {
-    onConfirm();
+  const handleConfirm = (user: User) => {
+    onConfirm(user);
   };
   return (
     <>
@@ -62,7 +64,7 @@ function ModalConfirm({
               <button
                 data-modal-hide="popup-modal"
                 type="button"
-                onClick={handleConfirm}
+                onClick={() => handleConfirm({} as User)}
                 className="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300  font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
               >
                 Sí, estoy seguro
