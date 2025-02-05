@@ -55,6 +55,24 @@ export const useNoteArchiveActions = () => {
       console.log("❌ Error al cargar notas de archivo:", error);
     }
   };
+
+  const handleReturn = async (id: string) => {
+    try {
+      const response = await fetch("/api/updateNote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, isArchived: false }),
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || "Error al actualizar la nota");
+      }
+      console.log("✅ Nota devuelta correctamente en la BD.");
+      await getNotes();
+    } catch (error) {
+      console.log("❌ Error al devolver nota de archivo:", error);
+    }
+  };
   return {
     noteToDelete,
     setNoteToDelete,
@@ -66,5 +84,6 @@ export const useNoteArchiveActions = () => {
     handleDelete,
     handleDeleteConfirm,
     getNotes,
+    handleReturn,
   };
 };

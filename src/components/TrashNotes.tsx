@@ -17,6 +17,8 @@ function TrashNotes({ user }: { user: User | null }) {
     handleDeleteConfirm,
     notesDeleted,
     handleDelete,
+    handleReturn,
+    handleArchive,
   } = useTrashNoteActions();
   useEffect(() => {
     getTrashNotes(user as User);
@@ -76,6 +78,7 @@ function TrashNotes({ user }: { user: User | null }) {
               </button>
               {/* Archive Icon */}
               <button
+                onClick={() => handleArchive(note.id, user as User)}
                 onMouseDown={(e) => e.preventDefault()}
                 aria-label="archive note"
                 className={`w-10 h-10 flex items-center justify-center rounded-full bg-${note.noteColor}-700/80 hover:bg-${note.noteColor}-600  transition-transform transform hover:scale-110`}
@@ -84,6 +87,7 @@ function TrashNotes({ user }: { user: User | null }) {
               </button>
               {/* Return Icon */}
               <button
+                onClick={() => handleReturn(note.id, user as User)}
                 onMouseDown={(e) => e.preventDefault()}
                 aria-label="return note"
                 className={`w-10 h-10 flex items-center justify-center rounded-full bg-${note.noteColor}-700/80 hover:bg-${note.noteColor}-600  transition-transform transform hover:scale-110`}

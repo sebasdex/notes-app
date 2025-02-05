@@ -16,6 +16,7 @@ function ArchivedNotes({ user }: { user: User | null }) {
     setIsAlertDelete,
     handleDelete,
     handleDeleteConfirm,
+    handleReturn,
   } = useNoteArchiveActions();
 
   useEffect(() => {
@@ -79,6 +80,7 @@ function ArchivedNotes({ user }: { user: User | null }) {
               </button>
               {/* Return Icon */}
               <button
+                onClick={() => handleReturn(note.id)}
                 onMouseDown={(e) => e.preventDefault()}
                 aria-label="return note"
                 className={`w-10 h-10 flex items-center justify-center rounded-full bg-${note.noteColor}-700/80 hover:bg-${note.noteColor}-600  transition-transform transform hover:scale-110`}

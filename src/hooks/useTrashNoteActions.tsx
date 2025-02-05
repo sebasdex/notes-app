@@ -56,6 +56,42 @@ export const useTrashNoteActions = () => {
     setIsAlertDelete(false);
   };
 
+  const handleReturn = async (id: string, user: User) => {
+    try {
+      const response = await fetch("/api/updateNote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, isDeleted: false }),
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || "Error al actualizar la nota");
+      }
+      console.log("✅ Nota devuelta correctamente en la BD.");
+      await getTrashNotes(user);
+    } catch (error) {
+      console.log("❌ Error al devolver nota de la papelera:", error);
+    }
+  };
+
+  const handleArchive = async (id: string, user: User) => {
+    try {
+      const response = await fetch("/api/updateNote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, isArchived: true, isDeleted: false }),
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || "Error al actualizar la nota");
+      }
+      console.log("✅ Nota archivada correctamente en la BD.");
+      await getTrashNotes(user);
+    } catch (error) {
+      console.log("❌ Error al archivar nota de la papelera:", error);
+    }
+  };
+
   return {
     handleDelete,
     handleDeleteConfirm,
@@ -65,5 +101,7 @@ export const useTrashNoteActions = () => {
     setNotesDeleted,
     notesDeleted,
     getTrashNotes,
+    handleReturn,
+    handleArchive,
   };
 };
