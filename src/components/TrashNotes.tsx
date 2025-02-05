@@ -12,29 +12,14 @@ import { User } from "@supabase/supabase-js";
 function TrashNotes({ user }: { user: User | null }) {
   const {
     setIsAlertDelete,
-    setNotesDeleted,
+    getTrashNotes,
     isAlertDelete,
     handleDeleteConfirm,
     notesDeleted,
     handleDelete,
   } = useTrashNoteActions();
   useEffect(() => {
-    const getTrashNotes = async () => {
-      if (!user?.id) {
-        return;
-      }
-      try {
-        const response = await fetch("/api/getTrashNotes");
-        const result = await response.json();
-        if (!response.ok) {
-          throw new Error(result.error || "Error desconocido en la API");
-        }
-        setNotesDeleted(result.trashNotes.length > 0 ? result.trashNotes : []);
-      } catch (error) {
-        console.log("❌ Error al cargar notas de la papelera:", error);
-      }
-    };
-    getTrashNotes();
+    getTrashNotes(user as User);
   }, []);
 
   return (
