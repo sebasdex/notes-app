@@ -16,7 +16,9 @@ export async function GET(req: Request) {
       .select("*")
       .eq("user_id", userId)
       .eq("isDeleted", false)
-      .eq("isArchived", true);
+      .eq("isArchived", true)
+      .order("date", { ascending: false })
+      .order("hour", { ascending: false });
     if (notesError) throw notesError;
     return NextResponse.json({ archivedNotes }, { status: 200 });
   } catch (error) {

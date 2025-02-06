@@ -14,7 +14,9 @@ export async function GET() {
       .select("*")
       .eq("user_id", userID)
       .eq("isDeleted", true)
-      .eq("isArchived", false);
+      .eq("isArchived", false)
+      .order("date", { ascending: false })
+      .order("hour", { ascending: false });
     if (notesError) throw notesError;
     return NextResponse.json({ trashNotes }, { status: 200 });
   } catch (error) {
