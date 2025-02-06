@@ -2,6 +2,7 @@ import { useNoteAppContext } from "@/context/useContextNoteApp";
 import { useState } from "react";
 import { createClient } from "@/config/supabaseClient";
 import { User } from "@supabase/supabase-js";
+import { toast } from "sonner";
 interface Note {
   id: string;
   textNote: string;
@@ -139,7 +140,7 @@ export const useNoteActions = () => {
           });
           return;
         }
-        try {
+        const deletePromise = async () => {
           const response = await fetch("/api/updateNote", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -159,9 +160,13 @@ export const useNoteActions = () => {
           if (!response.ok) {
             throw new Error(result.error || "Error al actualizar la nota");
           }
-        } catch (error) {
-          console.error("❌ Error al actualizar la nota en la BD:", error);
-        }
+          return { name: "Nota eliminada" };
+        };
+        toast.promise(deletePromise(), {
+          loading: "Eliminando nota...",
+          success: (data) => `${data.name} correctamente.`,
+          error: "Error al eliminar la nota.",
+        });
       }
       setNoteToDelete(null);
     }
@@ -185,31 +190,33 @@ export const useNoteActions = () => {
         localStorage.setItem("textNotes", JSON.stringify(updatedNotes));
         return updatedNotes;
       });
+
+      toast.info("Nota archivada localmente.");
       return;
     }
-    try {
+
+    const archivePromise = async () => {
       const response = await fetch("/api/updateNote", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: note.id, isArchived: true }),
       });
-
       const result = await response.json();
+      if (!response.ok)
+        throw new Error(result.error || "Error al archivar la nota");
       setTextNotes((prev) =>
         prev.map((txtNote) =>
-          txtNote.id === note.id
-            ? { ...txtNote, isArchived: result.data }
-            : txtNote
+          txtNote.id === note.id ? { ...txtNote, isArchived: true } : txtNote
         )
       );
-      if (!response.ok) {
-        throw new Error(result.error || "Error al actualizar la nota");
-      }
       await loadNotes(user);
-      //TODO: agregar mensaje de exito
-    } catch (error) {
-      console.error("❌ Error al actualizar la nota en la BD:", error);
-    }
+      return { name: "Nota archivada" };
+    };
+    toast.promise(archivePromise(), {
+      loading: "Archivando nota...",
+      success: (data) => `${data.name} correctamente.`,
+      error: "Error al archivar la nota.",
+    });
   };
 
   const addNoteToDBFromLS = async () => {
