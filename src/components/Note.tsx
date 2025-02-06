@@ -125,8 +125,8 @@ function Note({ user }: { user: User | null }) {
                     note.noteColor
                   }-700/80 hover:bg-${
                     note.noteColor
-                  }-600  transition-transform transform hover:scale-110 ${
-                    user?.id ? "" : "cursor-not-allowed hover:scale-100"
+                  }-600  transition-transform transform ${
+                    user?.id ? "hover:scale-110" : "cursor-not-allowed"
                   }`}
                 >
                   <TrashIcon
@@ -146,8 +146,8 @@ function Note({ user }: { user: User | null }) {
                     note.noteColor
                   }-700/80 hover:bg-${
                     note.noteColor
-                  }-600  transition-transform transform hover:scale-110 ${
-                    user?.id ? "" : "cursor-not-allowed hover:scale-100"
+                  }-600  transition-transform transform ${
+                    user?.id ? "hover:scale-110" : "cursor-not-allowed"
                   }`}
                 >
                   <ArchiveIcon
