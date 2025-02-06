@@ -14,7 +14,6 @@ function SideBar() {
   const router = useRouter();
   const colorButtons = ["bg-yellow-500", "bg-blue-500", "bg-red-500"];
   const { setTextNotes } = useNoteAppContext();
-  const supabase = createClient();
   const dateNoteCreate = new Date().toLocaleDateString("es-ES");
   const hourDateCreate = new Date().toLocaleTimeString("es-ES");
 
@@ -34,17 +33,6 @@ function SideBar() {
     };
 
     try {
-      const { data } = await supabase.auth.getUser();
-      const userId = data?.user?.id;
-      if (!userId) {
-        setTextNotes((prev) => {
-          const updatedNotes = [...prev, newNote];
-          localStorage.setItem("textNotes", JSON.stringify(updatedNotes));
-          return updatedNotes;
-        });
-        return;
-      }
-
       setTextNotes((prev) => [...prev, newNote]);
       const response = await fetch("/api/newNote", {
         method: "POST",

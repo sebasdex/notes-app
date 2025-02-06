@@ -44,7 +44,6 @@ export const useNoteActions = () => {
         throw new Error(result.error || "Error desconocido en la API");
       }
       setTextNotes(result.notes.length > 0 ? result.notes : []);
-      //TODO: agregar mensaje de exito
     } catch (error) {
       console.error("❌ Error al cargar notas desde API:", error);
     }
@@ -129,6 +128,7 @@ export const useNoteActions = () => {
       if (note) {
         const { data } = await supabase.auth.getUser();
         const userId = data?.user?.id;
+
         if (!userId) {
           setTextNotes((prev) => {
             const updatedNotes = prev.map((txtNote) =>
@@ -147,18 +147,18 @@ export const useNoteActions = () => {
           });
 
           const result = await response.json();
-          setTextNotes((prev) =>
-            prev.map((txtNote) =>
-              txtNote.id === note.id
-                ? { ...txtNote, isDeleted: result.data }
-                : txtNote
-            )
-          );
+          const isDeleted = result.data.isDeleted ?? result.data;
+
+          setTextNotes((prev) => {
+            const updatedNotes = prev.map((txtNote) =>
+              txtNote.id === note.id ? { ...txtNote, isDeleted } : txtNote
+            );
+            return updatedNotes;
+          });
+
           if (!response.ok) {
             throw new Error(result.error || "Error al actualizar la nota");
           }
-          await loadNotes(user);
-          //TODO: agregar mensaje de exito
         } catch (error) {
           console.error("❌ Error al actualizar la nota en la BD:", error);
         }
