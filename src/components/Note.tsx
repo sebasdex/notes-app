@@ -1,4 +1,4 @@
-import { use, useEffect } from "react";
+import { useEffect } from "react";
 import ModalConfirm from "@/components/ModalConfirm";
 import { useNoteActions } from "@/hooks/useNoteActions";
 import TrashIcon from "@/icons/TrashIcon";
@@ -41,8 +41,7 @@ function Note({ user }: { user: User | null }) {
         if (!response.ok) {
           throw new Error(result.error || "Error desconocido en la API");
         }
-
-        console.log("✅ Nota guardada correctamente en la BD:", result);
+        //TODO: agregar mensaje de exito
       } catch (error) {
         console.error("❌ Error al actualizar nota en la BD:", error);
       }
