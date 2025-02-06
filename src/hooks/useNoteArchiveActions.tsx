@@ -1,5 +1,6 @@
 import { useNoteAppContext } from "@/context/useContextNoteApp";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export const useNoteArchiveActions = () => {
   const { notesArchived, setNotesArchived, setNotesDeleted } =
@@ -11,7 +12,7 @@ export const useNoteArchiveActions = () => {
     if (noteToDelete) {
       const note = notesArchived.find((note) => note.id === noteToDelete);
       if (note) {
-        try {
+        const deletePromise = async () => {
           const response = await fetch("/api/updateNote", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -25,11 +26,16 @@ export const useNoteArchiveActions = () => {
           if (!response.ok) {
             throw new Error(result.error || "Error al actualizar la nota");
           }
-          //TODO: agregar mensaje de exito
           await getNotes();
-        } catch (error) {
-          console.log("❌ Error al eliminar nota de archivo:", error);
-        }
+          return { name: "Nota eliminada" };
+        };
+        toast.promise(deletePromise, {
+          loading: "Eliminando nota...",
+          success: (data) => {
+            return `${data.name} correctamente.`;
+          },
+          error: "Error",
+        });
       }
       setNoteToDelete(null);
     }
@@ -57,7 +63,7 @@ export const useNoteArchiveActions = () => {
   };
 
   const handleReturn = async (id: string) => {
-    try {
+    const returnPromise = async () => {
       const response = await fetch("/api/updateNote", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -67,11 +73,16 @@ export const useNoteArchiveActions = () => {
       if (!response.ok) {
         throw new Error(result.error || "Error al actualizar la nota");
       }
-      //TODO: agregar mensaje de exito
       await getNotes();
-    } catch (error) {
-      console.log("❌ Error al devolver nota de archivo:", error);
-    }
+      return { name: "Nota restaurada" };
+    };
+    toast.promise(returnPromise, {
+      loading: "Restaurando nota...",
+      success: (data) => {
+        return `${data.name} correctamente.`;
+      },
+      error: "Error",
+    });
   };
   return {
     noteToDelete,
