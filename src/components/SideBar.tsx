@@ -18,6 +18,8 @@ function SideBar() {
   const hourDateCreate = new Date().toLocaleTimeString("es-ES");
 
   const addNote = async (color: string) => {
+    const supabase = createClient();
+    const { data, error } = await supabase.auth.getUser();
     if (pathname === "/trash" || pathname === "/archive") {
       router.push("/");
     }
@@ -31,6 +33,15 @@ function SideBar() {
       date: dateNoteCreate,
       hour: hourDateCreate,
     };
+
+    if (!data?.user?.id) {
+      setTextNotes((prev) => {
+        const updatedNotes = [...prev, newNote];
+        localStorage.setItem("textNotes", JSON.stringify(updatedNotes));
+        return updatedNotes;
+      });
+      return;
+    }
 
     try {
       setTextNotes((prev) => [...prev, newNote]);
