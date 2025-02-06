@@ -1,6 +1,7 @@
 import { useNoteAppContext } from "@/context/useContextNoteApp";
 import { User } from "@supabase/supabase-js";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export const useTrashNoteActions = () => {
   const { setNotesDeleted, notesDeleted } = useNoteAppContext();
@@ -32,7 +33,7 @@ export const useTrashNoteActions = () => {
     if (trashNotes) {
       const note = notesDeleted.find((note) => note.id === trashNotes);
       if (note) {
-        try {
+        const deletePromise = async () => {
           const response = await fetch("/api/deleteNotes", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -45,11 +46,16 @@ export const useTrashNoteActions = () => {
           setNotesDeleted((prev) =>
             prev.filter((txtNote) => txtNote.id !== note.id)
           );
-          //TODO: agregar mensaje de exito
           await getTrashNotes(user);
-        } catch (error) {
-          console.log("❌ Error al eliminar nota de la BD:", error);
-        }
+          return { name: "Nota eliminada" };
+        };
+        toast.promise(deletePromise, {
+          loading: "Eliminando nota...",
+          success: (data) => {
+            return `${data.name} correctamente.`;
+          },
+          error: "Error",
+        });
       }
       setTrashNotes(null);
     }
@@ -57,7 +63,7 @@ export const useTrashNoteActions = () => {
   };
 
   const handleReturn = async (id: string, user: User) => {
-    try {
+    const returnPromise = async () => {
       const response = await fetch("/api/updateNote", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -67,15 +73,20 @@ export const useTrashNoteActions = () => {
       if (!response.ok) {
         throw new Error(result.error || "Error al actualizar la nota");
       }
-      //TODO: agregar mensaje de exito
       await getTrashNotes(user);
-    } catch (error) {
-      console.log("❌ Error al devolver nota de la papelera:", error);
-    }
+      return { name: "Nota restaurada" };
+    };
+    toast.promise(returnPromise, {
+      loading: "Restaurando nota...",
+      success: (data) => {
+        return `${data.name} correctamente.`;
+      },
+      error: "Error",
+    });
   };
 
   const handleArchive = async (id: string, user: User) => {
-    try {
+    const archivePromise = async () => {
       const response = await fetch("/api/updateNote", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -85,11 +96,16 @@ export const useTrashNoteActions = () => {
       if (!response.ok) {
         throw new Error(result.error || "Error al actualizar la nota");
       }
-      //TODO: agregar mensaje de exito
       await getTrashNotes(user);
-    } catch (error) {
-      console.log("❌ Error al archivar nota de la papelera:", error);
-    }
+      return { name: "Nota archivada" };
+    };
+    toast.promise(archivePromise, {
+      loading: "Archivando nota...",
+      success: (data) => {
+        return `${data.name} correctamente.`;
+      },
+      error: "Error",
+    });
   };
 
   return {
