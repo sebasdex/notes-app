@@ -11,7 +11,7 @@ function NavClient({ user }: { user: User | null }) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
-  const { setTextNotes, allNotes, setAllNotes } = useNoteAppContext();
+  const { setTextNotes, setSearchText } = useNoteAppContext();
 
   const handleLogOut = async () => {
     const response = await logOut();
@@ -22,7 +22,6 @@ function NavClient({ user }: { user: User | null }) {
     router.replace("/");
     setIsOpen(false);
     setTextNotes([]);
-    setAllNotes([]);
   };
 
   useEffect(() => {
@@ -37,21 +36,6 @@ function NavClient({ user }: { user: User | null }) {
     };
   }, []);
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const searchText = e.target.value.toLowerCase();
-
-    if (!searchText) {
-      setTextNotes(allNotes);
-      return;
-    }
-    const filteredNotes = allNotes.filter(
-      (note) =>
-        note.textNote.toLowerCase().includes(searchText) ||
-        note.date.toLowerCase().includes(searchText)
-    );
-    setTextNotes(filteredNotes);
-  };
-
   return (
     <header className="w-full flex flex-col md:flex-row md:justify-between items-center gap-4 p-4 nav">
       <div className="min-w-fit md:ml-8">
@@ -64,7 +48,7 @@ function NavClient({ user }: { user: User | null }) {
           type="text"
           name="search"
           placeholder="Search..."
-          onChange={handleSearch}
+          onChange={(e) => setSearchText(e.target.value)}
           className="w-full rounded-md bg-gray-100 p-2 text-sm border-none outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 text-gray-700"
         />
       </div>

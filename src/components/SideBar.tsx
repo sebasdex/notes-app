@@ -19,7 +19,7 @@ function SideBar() {
 
   const addNote = async (color: string) => {
     const supabase = createClient();
-    const { data, error } = await supabase.auth.getUser();
+    const { data } = await supabase.auth.getUser();
     if (pathname === "/trash" || pathname === "/archive") {
       router.push("/");
     }

@@ -21,19 +21,12 @@ function Note({ user }: { user: User | null }) {
     handleUnavailable,
     handleArchive,
     loadNotes,
-    setAllNotes,
-    allNotes,
+    searchText,
   } = useNoteActions();
 
   useEffect(() => {
     loadNotes(user as User);
   }, [user]);
-
-  useEffect(() => {
-    if (allNotes.length === 0 && textNotes.length > 0) {
-      setAllNotes(textNotes);
-    }
-  }, [textNotes]);
 
   const updateNoteInDB = async (id: string, newText: string) => {
     setTimeout(async () => {
@@ -55,6 +48,10 @@ function Note({ user }: { user: User | null }) {
     }, 2000);
   };
 
+  const filteredNotes = textNotes.filter((item) =>
+    item.textNote.toLowerCase().includes(searchText.toLowerCase())
+  );
+
   return (
     <>
       <ModalConfirm
@@ -64,9 +61,8 @@ function Note({ user }: { user: User | null }) {
         message="¿Estás seguro de eliminar esta nota?"
       />
       <section className="grid grid-cols-1 gap-6 mt-6 md:grid-cols-2 lg:grid-cols-4">
-        {textNotes
-          .filter((note) => !note.isDeleted)
-          .map((note, index) => (
+        {filteredNotes.length > 0 &&
+          filteredNotes.map((note, index) => (
             <div
               key={note.id}
               className={`relative p-4 focus-within:ring-2 focus-within:ring-black rounded-lg w-full transform opacity-0 translate-y-10 animate-slide-in ${note.noteColor}`}

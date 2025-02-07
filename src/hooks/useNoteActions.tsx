@@ -25,8 +25,7 @@ interface NoteDataArray {
 }
 
 export const useNoteActions = () => {
-  const { textNotes, setTextNotes, setAllNotes, allNotes } =
-    useNoteAppContext();
+  const { textNotes, setTextNotes, searchText } = useNoteAppContext();
   const [isAlertDelete, setIsAlertDelete] = useState<boolean>(false);
   const [_, setIsConfirm] = useState<boolean>(false);
   const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
@@ -39,6 +38,10 @@ export const useNoteActions = () => {
       return;
     }
     await addNoteToDBFromLS();
+    await handleSearch();
+  };
+
+  const handleSearch = async () => {
     try {
       const response = await fetch("/api/getNotes");
       const result = await response.json();
@@ -147,16 +150,14 @@ export const useNoteActions = () => {
             const updatedNotes = prev.map((txtNote) =>
               txtNote.id === note.id ? { ...txtNote, isDeleted } : txtNote
             );
-            const activeNotes = updatedNotes.filter(
-              (n) => !n.isDeleted && !n.isArchived
-            );
-            setAllNotes(activeNotes);
             return updatedNotes;
           });
 
           if (!response.ok) {
             throw new Error(result.error || "Error al actualizar la nota");
           }
+          await handleSearch();
+
           return { name: "Nota eliminada" };
         };
         toast.promise(deletePromise(), {
@@ -195,10 +196,6 @@ export const useNoteActions = () => {
         const updatedNotes = prev.map((txtNote) =>
           txtNote.id === note.id ? { ...txtNote, isArchived: true } : txtNote
         );
-        const activeNotes = updatedNotes.filter(
-          (n) => !n.isDeleted && !n.isArchived
-        );
-        setAllNotes(activeNotes);
         return updatedNotes;
       });
       await loadNotes(user);
@@ -269,7 +266,6 @@ export const useNoteActions = () => {
     handleArchive,
     addNoteToDBFromLS,
     loadNotes,
-    setAllNotes,
-    allNotes,
+    searchText,
   };
 };
