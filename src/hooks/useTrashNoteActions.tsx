@@ -4,7 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 export const useTrashNoteActions = () => {
-  const { setNotesDeleted, notesDeleted } = useNoteAppContext();
+  const { setNotesDeleted, notesDeleted, searchText } = useNoteAppContext();
   const [isAlertDelete, setIsAlertDelete] = useState<boolean>(false);
   const [trashNotes, setTrashNotes] = useState<string | null>(null);
 
@@ -119,5 +119,6 @@ export const useTrashNoteActions = () => {
     getTrashNotes,
     handleReturn,
     handleArchive,
+    searchText,
   };
 };
