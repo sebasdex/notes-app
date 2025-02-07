@@ -25,7 +25,8 @@ interface NoteDataArray {
 }
 
 export const useNoteActions = () => {
-  const { textNotes, setTextNotes } = useNoteAppContext();
+  const { textNotes, setTextNotes, setAllNotes, allNotes } =
+    useNoteAppContext();
   const [isAlertDelete, setIsAlertDelete] = useState<boolean>(false);
   const [_, setIsConfirm] = useState<boolean>(false);
   const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
@@ -277,5 +278,7 @@ export const useNoteActions = () => {
     handleArchive,
     addNoteToDBFromLS,
     loadNotes,
+    setAllNotes,
+    allNotes,
   };
 };

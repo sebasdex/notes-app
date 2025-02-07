@@ -21,11 +21,19 @@ function Note({ user }: { user: User | null }) {
     handleUnavailable,
     handleArchive,
     loadNotes,
+    setAllNotes,
+    allNotes,
   } = useNoteActions();
 
   useEffect(() => {
     loadNotes(user as User);
   }, [user]);
+
+  useEffect(() => {
+    if (allNotes.length === 0 && textNotes.length > 0) {
+      setAllNotes(textNotes);
+    }
+  }, [textNotes]);
 
   const updateNoteInDB = async (id: string, newText: string) => {
     setTimeout(async () => {
@@ -41,7 +49,6 @@ function Note({ user }: { user: User | null }) {
         if (!response.ok) {
           throw new Error(result.error || "Error desconocido en la API");
         }
-        //TODO: agregar mensaje de exito
       } catch (error) {
         console.error("❌ Error al actualizar nota en la BD:", error);
       }

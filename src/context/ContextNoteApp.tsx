@@ -18,6 +18,8 @@ interface NoteAppContext {
   setNotesDeleted: React.Dispatch<React.SetStateAction<Note[]>>;
   notesArchived: Note[];
   setNotesArchived: React.Dispatch<React.SetStateAction<Note[]>>;
+  allNotes: Note[];
+  setAllNotes: React.Dispatch<React.SetStateAction<Note[]>>;
 }
 
 export const NoteAppContext = createContext<NoteAppContext | undefined>(
@@ -30,6 +32,7 @@ export const NoteAppProvider: React.FC<{ children: React.ReactNode }> = ({
   const [textNotes, setTextNotes] = useState<Note[]>([]);
   const [notesDeleted, setNotesDeleted] = useState<Note[]>([]);
   const [notesArchived, setNotesArchived] = useState<Note[]>([]);
+  const [allNotes, setAllNotes] = useState<Note[]>([]);
 
   return (
     <NoteAppContext.Provider
@@ -40,6 +43,8 @@ export const NoteAppProvider: React.FC<{ children: React.ReactNode }> = ({
         setNotesDeleted,
         notesArchived,
         setNotesArchived,
+        allNotes,
+        setAllNotes,
       }}
     >
       {children}

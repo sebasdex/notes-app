@@ -5,20 +5,24 @@ import Image from "next/image";
 import { logOut } from "@/app/(auth)/login/actions";
 import { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
+import { useNoteAppContext } from "@/context/useContextNoteApp";
 
 function NavClient({ user }: { user: User | null }) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
+  const { setTextNotes, allNotes, setAllNotes } = useNoteAppContext();
 
   const handleLogOut = async () => {
-    const respomnse = await logOut();
-    if (respomnse.error) {
-      alert(respomnse.error);
+    const response = await logOut();
+    if (response.error) {
+      alert(response.error);
       return;
     }
     router.replace("/");
     setIsOpen(false);
+    setTextNotes([]);
+    setAllNotes([]);
   };
 
   useEffect(() => {
@@ -33,6 +37,21 @@ function NavClient({ user }: { user: User | null }) {
     };
   }, []);
 
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const searchText = e.target.value.toLowerCase();
+
+    if (!searchText) {
+      setTextNotes(allNotes);
+      return;
+    }
+    const filteredNotes = allNotes.filter(
+      (note) =>
+        note.textNote.toLowerCase().includes(searchText) ||
+        note.date.toLowerCase().includes(searchText)
+    );
+    setTextNotes(filteredNotes);
+  };
+
   return (
     <header className="w-full flex flex-col md:flex-row md:justify-between items-center gap-4 p-4 nav">
       <div className="min-w-fit md:ml-8">
@@ -45,6 +64,7 @@ function NavClient({ user }: { user: User | null }) {
           type="text"
           name="search"
           placeholder="Search..."
+          onChange={handleSearch}
           className="w-full rounded-md bg-gray-100 p-2 text-sm border-none outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 text-gray-700"
         />
       </div>
