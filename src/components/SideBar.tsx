@@ -94,9 +94,9 @@ function SideBar() {
             ))}
           </ul>
         </li>
-        {menuOptions.map((option, index) => (
+        {menuOptions.map((option) => (
           <li
-            key={index}
+            key={option.id}
             className="text-gray-400 md:flex-row group hover:text-gray-700"
           >
             <Link
