@@ -1,5 +1,6 @@
 import { toast } from "sonner";
 import { login, googleLogin } from "@/app/(auth)/login/actions";
+import Link from "next/link";
 interface LoginFormProps {
   setIsRegister: (value: boolean) => void;
 }
@@ -24,8 +25,32 @@ function LoginForm({ setIsRegister }: LoginFormProps) {
   };
 
   return (
-    <section className="bg-gray-200 rounded-xl min-w-80 max-w-md p-8 mx-auto shadow-lg">
-      <h1 className="text-3xl font-semibold text-gray-700 mb-6">Bienvenido</h1>
+    <section className="bg-gray-200 rounded-xl min-w-80 max-w-md p-8 mx-auto shadow-lg relative">
+      <Link
+        href="/"
+        className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 flex items-center gap-1 text-sm font-medium transition-all"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={2}
+          stroke="currentColor"
+          className="w-4 h-4"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M15 19l-7-7 7-7"
+          />
+        </svg>
+        Atrás
+      </Link>
+
+      <h1 className="text-3xl font-semibold text-gray-700 mb-6 text-center">
+        Bienvenido
+      </h1>
+
       <button
         type="button"
         onClick={googleLogin}
@@ -58,12 +83,14 @@ function LoginForm({ setIsRegister }: LoginFormProps) {
         </svg>
         Ingresa con Google
       </button>
+
       <div className="relative flex items-center justify-center w-full mb-6">
         <hr className="w-full h-px bg-gray-400 border-0" />
         <span className="absolute px-3 text-sm font-medium text-gray-500 bg-gray-200">
           o
         </span>
       </div>
+
       <form onSubmit={handleSubmit} className="flex flex-col">
         <div className="mb-5">
           <label
@@ -81,6 +108,7 @@ function LoginForm({ setIsRegister }: LoginFormProps) {
             required
           />
         </div>
+
         <div className="mb-5">
           <label
             htmlFor="password"
@@ -97,6 +125,7 @@ function LoginForm({ setIsRegister }: LoginFormProps) {
             required
           />
         </div>
+
         <button
           type="submit"
           className="w-full mt-4 px-5 py-2.5 mb-6 text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-400 rounded-lg transition-all"
@@ -104,6 +133,7 @@ function LoginForm({ setIsRegister }: LoginFormProps) {
           Ingresa a tu cuenta
         </button>
       </form>
+
       <div className="text-center">
         <p className="text-sm text-gray-600">
           ¿No tienes cuenta?{" "}
