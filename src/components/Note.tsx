@@ -48,8 +48,10 @@ function Note({ user }: { user: User | null }) {
     }, 2000);
   };
 
-  const filteredNotes = textNotes.filter((item) =>
-    item.textNote.toLowerCase().includes(searchText.toLowerCase())
+  const filteredNotes = textNotes.filter(
+    (item) =>
+      item.textNote.toLowerCase().includes(searchText.toLowerCase()) ||
+      item.date.toLowerCase().includes(searchText.toLowerCase())
   );
 
   return (
