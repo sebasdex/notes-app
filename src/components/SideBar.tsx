@@ -17,6 +17,21 @@ function SideBar() {
   const dateNoteCreate = new Date().toLocaleDateString("es-ES");
   const hourDateCreate = new Date().toLocaleTimeString("es-ES");
 
+  const menuOptions = [
+    {
+      id: 1,
+      name: "Archivo",
+      icon: <ArchiveIcon />,
+      path: "/archive",
+    },
+    {
+      id: 2,
+      name: "Papelera",
+      icon: <TrashIcon width={24} height={24} stroke="" strokeWidth={2} />,
+      path: "/trash",
+    },
+  ];
+
   const addNote = async (color: string) => {
     const supabase = createClient();
     const { data } = await supabase.auth.getUser();
@@ -79,22 +94,22 @@ function SideBar() {
             ))}
           </ul>
         </li>
-        <li className="text-gray-400 md:flex-row group hover:text-gray-700">
-          <Link href="/archive" className="flex flex-col items-center gap-2">
-            <span className="group-hover:cursor-pointer">
-              <ArchiveIcon width={24} height={24} stroke="" strokeWidth={2} />
-            </span>
-            <span>Archive</span>
-          </Link>
-        </li>
-        <li className=" text-gray-400 md:flex-row group hover:text-gray-700">
-          <Link href="/trash" className="flex flex-col items-center gap-2">
-            <span className="group-hover:cursor-pointer">
-              <TrashIcon width={24} height={24} stroke="" strokeWidth={2} />
-            </span>
-            <span>Trash</span>
-          </Link>
-        </li>
+        {menuOptions.map((option, index) => (
+          <li
+            key={index}
+            className="text-gray-400 md:flex-row group hover:text-gray-700"
+          >
+            <Link
+              href={option.path}
+              className={`flex flex-col items-center gap-2 ${
+                pathname === option.path ? "text-black" : ""
+              }`}
+            >
+              <span className="group-hover:cursor-pointer">{option.icon}</span>
+              <span>{option.name}</span>
+            </Link>
+          </li>
+        ))}
       </ul>
     </section>
   );
