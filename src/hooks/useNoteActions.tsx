@@ -130,15 +130,7 @@ export const useNoteActions = () => {
       if (note) {
         const { data } = await supabase.auth.getUser();
         const userId = data?.user?.id;
-
         if (!userId) {
-          setTextNotes((prev) => {
-            const updatedNotes = prev.map((txtNote) =>
-              txtNote.id === note.id ? { ...txtNote, isDeleted: true } : txtNote
-            );
-            localStorage.setItem("textNotes", JSON.stringify(updatedNotes));
-            return updatedNotes;
-          });
           return;
         }
         const deletePromise = async () => {
@@ -155,6 +147,10 @@ export const useNoteActions = () => {
             const updatedNotes = prev.map((txtNote) =>
               txtNote.id === note.id ? { ...txtNote, isDeleted } : txtNote
             );
+            const activeNotes = updatedNotes.filter(
+              (n) => !n.isDeleted && !n.isArchived
+            );
+            setAllNotes(activeNotes);
             return updatedNotes;
           });
 
@@ -182,17 +178,7 @@ export const useNoteActions = () => {
   const handleArchive = async (note: Note, user: User) => {
     const { data } = await supabase.auth.getUser();
     const userId = data?.user?.id;
-
     if (!userId) {
-      setTextNotes((prev) => {
-        const updatedNotes = prev.map((txtNote) =>
-          txtNote.id === note.id ? { ...txtNote, isArchived: true } : txtNote
-        );
-        localStorage.setItem("textNotes", JSON.stringify(updatedNotes));
-        return updatedNotes;
-      });
-
-      toast.info("Nota archivada localmente.");
       return;
     }
 
@@ -205,11 +191,16 @@ export const useNoteActions = () => {
       const result = await response.json();
       if (!response.ok)
         throw new Error(result.error || "Error al archivar la nota");
-      setTextNotes((prev) =>
-        prev.map((txtNote) =>
+      setTextNotes((prev) => {
+        const updatedNotes = prev.map((txtNote) =>
           txtNote.id === note.id ? { ...txtNote, isArchived: true } : txtNote
-        )
-      );
+        );
+        const activeNotes = updatedNotes.filter(
+          (n) => !n.isDeleted && !n.isArchived
+        );
+        setAllNotes(activeNotes);
+        return updatedNotes;
+      });
       await loadNotes(user);
       return { name: "Nota archivada" };
     };
