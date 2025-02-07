@@ -3,7 +3,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 export const useNoteArchiveActions = () => {
-  const { notesArchived, setNotesArchived, setNotesDeleted } =
+  const { notesArchived, setNotesArchived, setNotesDeleted, searchText } =
     useNoteAppContext();
   const [isAlertDelete, setIsAlertDelete] = useState<boolean>(false);
   const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
@@ -96,5 +96,6 @@ export const useNoteArchiveActions = () => {
     handleDeleteConfirm,
     getNotes,
     handleReturn,
+    searchText,
   };
 };
