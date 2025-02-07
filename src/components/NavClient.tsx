@@ -6,6 +6,7 @@ import { logOut } from "@/app/(auth)/login/actions";
 import { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import { useNoteAppContext } from "@/context/useContextNoteApp";
+import UserIcon from "@/icons/UserIcon";
 
 function NavClient({ user }: { user: User | null }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -69,22 +70,16 @@ function NavClient({ user }: { user: User | null }) {
             id="avatarButton"
             aria-haspopup="true"
             aria-expanded={isOpen}
-            className="w-10 h-10 rounded-full ring-2 text-xs object-cover object-top focus:outline-none"
+            className="w-10 h-10 flex items-center justify-center rounded-full text-xs object-cover object-top hover:bg-gray-100 focus:outline-none"
             onClick={() => setIsOpen((prev) => !prev)}
           >
-            <Image
-              src="https://images.pexels.com/photos/1516680/pexels-photo-1516680.jpeg"
-              alt="User dropdown"
-              width={40}
-              height={40}
-              className="rounded-full w-full h-full object-cover object-top"
-            />
+            <UserIcon />
           </button>
 
           {isOpen && (
             <div
               id="userDropdown"
-              className="absolute top-10 right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+              className="absolute top-10 -right-24 md:right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
               role="menu"
               aria-labelledby="avatarButton"
             >
