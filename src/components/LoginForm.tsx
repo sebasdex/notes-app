@@ -1,6 +1,7 @@
 import { toast } from "sonner";
 import { login, googleLogin } from "@/app/(auth)/login/actions";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 interface LoginFormProps {
   setIsRegister: (value: boolean) => void;
 }
@@ -17,6 +18,9 @@ function LoginForm({ setIsRegister }: LoginFormProps) {
         } else {
           toast.error(response.error);
         }
+      }
+      if (response?.success) {
+        throw redirect("/");
       }
     } catch (error) {
       console.log("Error al iniciar sesión", error);

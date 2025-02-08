@@ -19,7 +19,7 @@ export async function login(formData: FormData) {
   if (error) {
     return { error: error.message };
   }
-  return redirect("/");
+  return { success: true, error: null };
 }
 
 export async function signup(formData: FormData) {
