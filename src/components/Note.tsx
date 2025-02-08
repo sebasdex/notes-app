@@ -26,7 +26,7 @@ function Note({ user }: { user: User | null }) {
 
   useEffect(() => {
     loadNotes(user as User);
-  }, [user]);
+  }, [user, loadNotes]);
 
   const updateNoteInDB = async (id: string, newText: string) => {
     setTimeout(async () => {

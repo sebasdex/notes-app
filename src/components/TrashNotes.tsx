@@ -24,7 +24,7 @@ function TrashNotes({ user }: { user: User | null }) {
 
   useEffect(() => {
     getTrashNotes(user as User);
-  }, []);
+  });
 
   const filteredNotes = notesDeleted.filter(
     (item) =>

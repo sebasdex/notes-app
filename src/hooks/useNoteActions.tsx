@@ -127,7 +127,7 @@ export const useNoteActions = () => {
     }
   };
 
-  const handleDeleteConfirm = async (user: User) => {
+  const handleDeleteConfirm = async () => {
     if (noteToDelete) {
       const note = textNotes.find((note) => note.id === noteToDelete);
       if (note) {

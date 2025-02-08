@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import { logOut } from "@/app/(auth)/login/actions";
 import { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
