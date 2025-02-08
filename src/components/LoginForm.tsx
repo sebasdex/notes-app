@@ -1,3 +1,4 @@
+"use client";
 import { toast } from "sonner";
 import { login, googleLogin } from "@/app/(auth)/login/actions";
 import Link from "next/link";
