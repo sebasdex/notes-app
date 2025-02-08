@@ -19,10 +19,7 @@ export async function POST(req: Request) {
     const supabase = await createClient();
     const { data, error: authError } = await supabase.auth.getUser();
     if (authError || !data?.user?.id) {
-      return NextResponse.json(
-        { error: "No estas autenticado" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: authError?.message }, { status: 401 });
     }
     const userID = data.user.id;
     const notesArray = dataClient.id.map((_, i) => ({
@@ -47,6 +44,7 @@ export async function POST(req: Request) {
       { status: 200 }
     );
   } catch (error) {
+    console.log("Error al sincronizar notas:", error);
     return NextResponse.json(
       { error: "Error interno del servidor" },
       { status: 500 }
