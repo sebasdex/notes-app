@@ -20,6 +20,8 @@ interface NoteAppContext {
   setNotesArchived: React.Dispatch<React.SetStateAction<Note[]>>;
   searchText: string;
   setSearchText: React.Dispatch<React.SetStateAction<string>>;
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const NoteAppContext = createContext<NoteAppContext | undefined>(
@@ -33,6 +35,7 @@ export const NoteAppProvider: React.FC<{ children: React.ReactNode }> = ({
   const [notesDeleted, setNotesDeleted] = useState<Note[]>([]);
   const [notesArchived, setNotesArchived] = useState<Note[]>([]);
   const [searchText, setSearchText] = useState<string>("");
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <NoteAppContext.Provider
@@ -45,6 +48,8 @@ export const NoteAppProvider: React.FC<{ children: React.ReactNode }> = ({
         setNotesArchived,
         searchText,
         setSearchText,
+        isOpen,
+        setIsOpen,
       }}
     >
       {children}

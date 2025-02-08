@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { logOut } from "@/app/(auth)/login/actions";
 import { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
@@ -8,10 +8,10 @@ import { useNoteAppContext } from "@/context/useContextNoteApp";
 import UserIcon from "@/icons/UserIcon";
 
 function NavClient({ user }: { user: User | null }) {
-  const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
-  const { setTextNotes, setSearchText } = useNoteAppContext();
+  const { setTextNotes, setSearchText, setIsOpen, isOpen } =
+    useNoteAppContext();
 
   const handleLogOut = async () => {
     const response = await logOut();
