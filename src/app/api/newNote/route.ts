@@ -5,8 +5,8 @@ export async function POST(req: Request) {
   try {
     const dataClient = await req.json();
     const supabase = await createClient();
-    const { data, error } = await supabase.auth.getUser();
-    if (error || !data?.user?.id) {
+    const { data, error: authError } = await supabase.auth.getUser();
+    if (authError || !data?.user?.id) {
       return NextResponse.json(
         { error: "No estas autenticado" },
         { status: 401 }
@@ -23,9 +23,11 @@ export async function POST(req: Request) {
       hour: dataClient.hour,
       user_id: data.user.id,
     };
-    await supabase.from("newNotes").insert([addNote]);
-    if (error) {
-      return NextResponse.json({ error }, { status: 500 });
+    const { error: insertError } = await supabase
+      .from("newNotes")
+      .insert([addNote]);
+    if (insertError) {
+      return NextResponse.json({ error: insertError.message }, { status: 500 });
     }
     return NextResponse.json(
       { message: "Datos insertados correctamente" },
