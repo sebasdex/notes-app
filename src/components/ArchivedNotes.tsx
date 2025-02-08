@@ -24,7 +24,7 @@ function ArchivedNotes({ user }: { user: User | null }) {
     if (user) {
       getNotes();
     }
-  }, []);
+  });
 
   const filteredNotes = notesArchived.filter(
     (item) =>

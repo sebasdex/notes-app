@@ -4,10 +4,10 @@ import { createClient } from "@/config/supabaseServer";
 import useRedirect from "@/hooks/useRedirect";
 import { Toaster } from "sonner";
 
-export default async function page() {
+export default async function Page() {
   await useRedirect();
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.getUser();
+  const { data } = await supabase.auth.getUser();
   const user = data?.user;
   return (
     <>

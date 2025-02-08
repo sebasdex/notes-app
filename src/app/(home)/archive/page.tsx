@@ -4,7 +4,7 @@ import ArchiveIcon from "@/icons/ArchiveIcon";
 import { createClient } from "@/config/supabaseServer";
 
 export default async function Page() {
-  await useRedirect();
+  useRedirect();
   const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
   const user = data?.user;
