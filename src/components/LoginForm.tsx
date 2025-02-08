@@ -2,14 +2,11 @@
 import { toast } from "sonner";
 import { login, googleLogin } from "@/app/(auth)/login/actions";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { useNoteAppContext } from "@/context/useContextNoteApp";
 interface LoginFormProps {
   setIsRegister: (value: boolean) => void;
 }
 
 function LoginForm({ setIsRegister }: LoginFormProps) {
-  const { setIsOpen } = useNoteAppContext();
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
@@ -21,10 +18,6 @@ function LoginForm({ setIsRegister }: LoginFormProps) {
         } else {
           toast.error(response.error);
         }
-      }
-      if (response?.success) {
-        setIsOpen(true);
-        redirect("/");
       }
     } catch (error) {
       console.log("Error al iniciar sesión", error);
