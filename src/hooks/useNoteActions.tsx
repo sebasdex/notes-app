@@ -27,7 +27,7 @@ interface NoteDataArray {
 export const useNoteActions = () => {
   const { textNotes, setTextNotes, searchText } = useNoteAppContext();
   const [isAlertDelete, setIsAlertDelete] = useState<boolean>(false);
-  const [_, setIsConfirm] = useState<boolean>(false);
+  const [, setIsConfirm] = useState<boolean>(false);
   const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
   const supabase = createClient();
 

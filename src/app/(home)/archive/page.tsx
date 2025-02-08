@@ -3,10 +3,10 @@ import useRedirect from "@/hooks/useRedirect";
 import ArchiveIcon from "@/icons/ArchiveIcon";
 import { createClient } from "@/config/supabaseServer";
 
-export default async function page() {
+export default async function Page() {
   await useRedirect();
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.getUser();
+  const { data } = await supabase.auth.getUser();
   const user = data?.user;
   return (
     <section className="p-4">
