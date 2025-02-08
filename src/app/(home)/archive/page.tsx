@@ -1,13 +1,15 @@
 import ArchivedNotesWrapped from "@/components/ArchivedNotesWrapped";
-import useRedirect from "@/hooks/useRedirect";
 import ArchiveIcon from "@/icons/ArchiveIcon";
 import { createClient } from "@/config/supabaseServer";
+import { redirect } from "next/navigation";
 
 export default async function Page() {
-  useRedirect();
   const supabase = await createClient();
-  const { data } = await supabase.auth.getUser();
+  const { data, error } = await supabase.auth.getUser();
   const user = data?.user;
+  if (error || !data?.user) {
+    redirect("/login");
+  }
   return (
     <section className="p-4">
       <div className="flex items-center gap-2">

@@ -1,14 +1,16 @@
 import TrashNotes from "@/components/TrashNotes";
 import TrashIcon from "@/icons/TrashIcon";
 import { createClient } from "@/config/supabaseServer";
-import useRedirect from "@/hooks/useRedirect";
+import { redirect } from "next/navigation";
 import { Toaster } from "sonner";
 
 export default async function Page() {
-  await useRedirect();
   const supabase = await createClient();
-  const { data } = await supabase.auth.getUser();
+  const { data, error } = await supabase.auth.getUser();
   const user = data?.user;
+  if (error || !data?.user) {
+    redirect("/login");
+  }
   return (
     <>
       <Toaster position="top-center" richColors />
