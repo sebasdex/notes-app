@@ -61,7 +61,7 @@ export async function googleLogin() {
     return { error: error.message };
   }
   if (data?.url) {
-    redirect(data?.url);
+    throw redirect(data?.url);
   }
   return { error: "Error al iniciar sesión." };
 }

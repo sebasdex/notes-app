@@ -29,16 +29,6 @@ function LoginForm({ setIsRegister }: LoginFormProps) {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    const response = await googleLogin();
-    if (response?.url) {
-      router.push(response.url);
-    }
-    if (response?.error) {
-      toast.error(response.error);
-    }
-  };
-
   return (
     <section className="bg-gray-200 rounded-xl min-w-80 max-w-md p-8 mx-auto shadow-lg relative">
       <Link
@@ -68,7 +58,7 @@ function LoginForm({ setIsRegister }: LoginFormProps) {
 
       <button
         type="button"
-        onClick={handleGoogleLogin}
+        onClick={googleLogin}
         className="flex items-center justify-center w-full mb-6 text-white bg-gray-600 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-400 font-medium rounded-lg text-sm px-5 py-2.5 transition-all"
       >
         <svg
