@@ -1,5 +1,6 @@
 "use server";
 import { createClient } from "@/config/supabaseServer";
+import { redirect } from "next/navigation";
 
 export async function login(formData: FormData) {
   const supabase = await createClient();
@@ -59,5 +60,8 @@ export async function googleLogin() {
   if (error) {
     return { error: error.message };
   }
-  return { url: data?.url };
+  if (data?.url) {
+    redirect(data?.url);
+  }
+  return { error: "Error al iniciar sesión." };
 }
