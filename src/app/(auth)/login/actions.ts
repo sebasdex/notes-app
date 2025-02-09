@@ -1,7 +1,5 @@
 "use server";
-import { redirect } from "next/navigation";
 import { createClient } from "@/config/supabaseServer";
-import { url } from "inspector";
 
 export async function login(formData: FormData) {
   const supabase = await createClient();
