@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useNoteAppContext } from "@/context/useContextNoteApp";
 import UserIcon from "@/icons/UserIcon";
 
-function NavClient({ user }: { user: User | null }) {
+function NavClient({ user }: { user: User }) {
   const menuRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
   const { setTextNotes, setSearchText, setIsOpen, isOpen } =
@@ -75,7 +75,7 @@ function NavClient({ user }: { user: User | null }) {
             <UserIcon />
           </button>
 
-          {isOpen && user.id && (
+          {isOpen && (
             <div
               id="userDropdown"
               className="absolute top-10 -right-24 md:right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"

@@ -1,12 +1,13 @@
-"use client";
 import { toast } from "sonner";
 import { login, googleLogin } from "@/app/(auth)/login/actions";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 interface LoginFormProps {
   setIsRegister: (value: boolean) => void;
 }
 
 function LoginForm({ setIsRegister }: LoginFormProps) {
+  const router = useRouter();
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
@@ -19,9 +20,22 @@ function LoginForm({ setIsRegister }: LoginFormProps) {
           toast.error(response.error);
         }
       }
+      if (response?.success) {
+        router.replace("/");
+      }
     } catch (error) {
       console.log("Error al iniciar sesión", error);
       toast.error("Ocurrió un error inesperado, intenta de nuevo");
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    const response = await googleLogin();
+    if (response?.url) {
+      router.push(response.url);
+    }
+    if (response?.error) {
+      toast.error(response.error);
     }
   };
 
@@ -54,7 +68,7 @@ function LoginForm({ setIsRegister }: LoginFormProps) {
 
       <button
         type="button"
-        onClick={googleLogin}
+        onClick={handleGoogleLogin}
         className="flex items-center justify-center w-full mb-6 text-white bg-gray-600 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-400 font-medium rounded-lg text-sm px-5 py-2.5 transition-all"
       >
         <svg

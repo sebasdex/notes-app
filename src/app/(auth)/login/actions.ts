@@ -1,6 +1,7 @@
 "use server";
 import { redirect } from "next/navigation";
 import { createClient } from "@/config/supabaseServer";
+import { url } from "inspector";
 
 export async function login(formData: FormData) {
   const supabase = await createClient();
@@ -10,16 +11,15 @@ export async function login(formData: FormData) {
   if (!email || !password) {
     return { error: "Correo y contraseña son requeridos." };
   }
-
   const { error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
-
   if (error) {
     return { error: error.message };
   }
-  throw redirect("/");
+
+  return { success: true };
 }
 
 export async function signup(formData: FormData) {
@@ -61,9 +61,5 @@ export async function googleLogin() {
   if (error) {
     return { error: error.message };
   }
-
-  if (data?.url) {
-    throw redirect(data?.url);
-  }
-  return { error: "Error al iniciar sesión." };
+  return { url: data?.url };
 }
