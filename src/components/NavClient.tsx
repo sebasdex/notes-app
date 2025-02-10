@@ -6,6 +6,7 @@ import { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import { useNoteAppContext } from "@/context/useContextNoteApp";
 import UserIcon from "@/icons/UserIcon";
+import Image from "next/image";
 
 function NavClient({ user }: { user: User }) {
   const menuRef = useRef<HTMLButtonElement>(null);
@@ -72,7 +73,17 @@ function NavClient({ user }: { user: User }) {
             className="w-10 h-10 flex items-center justify-center rounded-full text-xs object-cover object-top hover:bg-gray-100 focus:outline-none"
             onClick={() => setIsOpen((prev) => !prev)}
           >
-            <UserIcon />
+            {user.user_metadata.avatar_url ? (
+              <Image
+                src={user.user_metadata.avatar_url}
+                alt="avatar"
+                width={40}
+                height={40}
+                className="rounded-full"
+              />
+            ) : (
+              <UserIcon />
+            )}
           </button>
 
           {isOpen && (
@@ -84,7 +95,9 @@ function NavClient({ user }: { user: User }) {
             >
               <div className="px-4 py-3 text-sm text-gray-900">
                 <div>Bienvenido</div>
-                <div className="font-medium truncate">{user.email}</div>
+                <div className="font-medium truncate">
+                  {user.user_metadata.full_name ?? user.email}
+                </div>
               </div>
               <div className="py-1">
                 <button
