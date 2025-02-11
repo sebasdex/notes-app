@@ -11,7 +11,8 @@
   display: grid;
   grid-template-areas:
     "nav nav"
-    "sidebar main";
+    "sidebar main"
+    "sidebar footer";
   grid-template-rows: auto 1fr;
   grid-template-columns: 200px 1fr; /* Ajusta el ancho del sidebar */
   height: 100vh; /* Para que ocupe toda la pantalla */
@@ -36,13 +37,19 @@
   padding: 1rem;
 }
 
+.footer {
+  grid-area: footer;
+  padding: 1rem;
+}
+
 @media (max-width: 768px) {
   .grid-area-container {
     grid-template-areas:
       "nav"
       "sidebar"
-      "main";
-    grid-template-rows: auto auto 1fr;
+      "main"
+      "footer";
+    grid-template-rows: auto auto 1fr auto;
     grid-template-columns: 1fr;
   }
 }

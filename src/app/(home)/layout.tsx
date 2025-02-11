@@ -1,3 +1,4 @@
+import Footer from "@/components/Footer";
 import Nav from "@/components/Nav";
 import SideBar from "@/components/SideBar";
 import { NoteAppProvider } from "@/context/ContextNoteApp";
@@ -13,6 +14,7 @@ export default function HomeLayout({
         <Nav />
         <SideBar />
         <main className="main">{children}</main>
+        <Footer />
       </div>
     </NoteAppProvider>
   );
