@@ -11,6 +11,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const metadata = {
+  title: "Notes App",
+  description: "Notes App",
+};
+
 export default function RootLayout({
   children,
 }: {
